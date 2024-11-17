@@ -4,7 +4,7 @@ This is a Flask-based web application that allows users to connect to SSH server
 
 ---
 
-![v1.1 - User Interface](image.png)
+![v1.1 - User Interface](UI.png)
 
 ## Features
 
