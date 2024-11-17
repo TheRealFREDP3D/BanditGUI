@@ -11,3 +11,4 @@ __pycache__
 appmap.yml
 appmap.log
 user_progress.json
+/.chat
