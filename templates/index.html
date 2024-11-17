@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Helper - OverTheWire Bandit</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .terminal-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ssh-form {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background-color: #2d2d2d;
+            border-radius: 5px;
+        }
+        .ssh-form input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 3px;
+            background-color: #404040;
+            color: #ffffff;
+        }
+        .terminal-container {
+            flex: 1;
+            background-color: #000;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .chat-container {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #363636;
+            border-radius: 5px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 3px;
+            background-color: #404040;
+            color: #ffffff;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0066aa;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .user-message {
+            background-color: #2b5797;
+        }
+        .assistant-message {
+            background-color: #444444;
+        }
+        .challenge-info {
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .challenge-info h2 {
+            margin: 0 0 15px 0;
+            color: #007acc;
+        }
+        .info-section {
+            margin-bottom: 15px;
+        }
+        .info-section h4 {
+            color: #007acc;
+            margin: 10px 0 5px 0;
+        }
+        .info-section p, .info-section ul {
+            margin: 5px 0;
+        }
+        .info-section ul {
+            padding-left: 20px;
+        }
+        .info-section li {
+            margin: 5px 0;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            max-width: 400px;
+            display: none;
+        }
+        
+        .notification.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .completed-level {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .level-password {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="terminal-section">
+                <div class="ssh-form">
+                    <input type="text" id="username" placeholder="Username (e.g., bandit0)" value="bandit0">
+                    <input type="password" id="password" placeholder="Password">
+                    <button onclick="connectSSH()">Connect</button>
+                </div>
+                <div class="terminal-container" id="terminal"></div>
+            </div>
+            <div class="challenge-info" id="challenge-info">
+                <h2>Challenge Information</h2>
+                <div class="info-content">
+                    <h3 id="level-title">Not Connected</h3>
+                    <div class="info-section">
+                        <h4>Description</h4>
+                        <p id="level-description">Connect to a level to see its description.</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Objective</h4>
+                        <p id="level-objective">Connect to a level to see its objective.</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Hints</h4>
+                        <ul id="level-hints">
+                            <li>Connect to a level to see hints.</li>
+                        </ul>
+                    </div>
+                    <div class="info-section">
+                        <h4>Useful Commands</h4>
+                        <ul id="level-commands">
+                            <li>Connect to a level to see useful commands.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Ask for help...">
+                <button onclick="sendChatMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const socket = io();
+        let connected = false;
+        let currentLevel = 0;
+        let terminalFocused = false;
+
+        // Terminal setup
+        const term = new Terminal({
+            cursorBlink: true,
+            fontSize: 14,
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            theme: {
+                background: '#1e1e1e',
+                foreground: '#ffffff'
+            }
+        });
+        term.open(document.getElementById('terminal'));
+
+        let currentLine = '';
+
+        // Create a new input element for command input
+        const terminalInput = document.createElement('input');
+        terminalInput.style.opacity = '0';
+        terminalInput.style.position = 'absolute';
+        terminalInput.style.zIndex = '-1';
+        document.body.appendChild(terminalInput);
+
+        // Focus/blur handling for terminal
+        term.element.addEventListener('click', () => {
+            terminalFocused = true;
+            terminalInput.focus();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!term.element.contains(e.target)) {
+                terminalFocused = false;
+            }
+        });
+
+        // Handle input only when terminal is focused
+        terminalInput.addEventListener('input', (e) => {
+            if (!terminalFocused) return;
+            const char = e.data;
+            if (char && char.length === 1) {
+                currentLine += char;
+                term.write(char);
+            }
+        });
+
+        // Handle special keys only when terminal is focused
+        terminalInput.addEventListener('keydown', (e) => {
+            if (!terminalFocused) return;
+            if (e.key === 'Enter') {
+                term.write('\r\n');
+                if (currentLine.trim()) {
+                    socket.emit('ssh_command', {
+                        command: currentLine.trim(),
+                        current_level: currentLevel
+                    });
+                } else {
+                    term.write('$ ');
+                }
+                currentLine = '';
+                terminalInput.value = '';
+            } else if (e.key === 'Backspace') {
+                if (currentLine.length > 0) {
+                    currentLine = currentLine.slice(0, -1);
+                    term.write('\b \b');
+                }
+            }
+        });
+
+        // Keep input focused only when terminal is focused
+        setInterval(() => {
+            if (terminalFocused && document.activeElement !== terminalInput) {
+                terminalInput.focus();
+            }
+        }, 100);
+
+        socket.on('terminal_output', function(data) {
+            if (data.output) {
+                term.write(data.output + '\r\n$ ');
+            } else {
+                term.write('$ ');
+            }
+        });
+
+        socket.on('ssh_connected', function(data) {
+            connected = true;
+            term.write('\r\nConnected to bandit.labs.overthewire.org\r\n$ ');
+            
+            // Update challenge information
+            if (data.level_info) {
+                document.getElementById('level-title').textContent = data.level_info.level;
+                document.getElementById('level-description').textContent = data.level_info.description;
+                document.getElementById('level-objective').textContent = data.level_info.objective;
+                
+                const hintsList = document.getElementById('level-hints');
+                hintsList.innerHTML = '';
+                data.level_info.hints.forEach(hint => {
+                    const li = document.createElement('li');
+                    li.textContent = hint;
+                    hintsList.appendChild(li);
+                });
+                
+                const commandsList = document.getElementById('level-commands');
+                commandsList.innerHTML = '';
+                data.level_info.useful_commands.forEach(cmd => {
+                    const li = document.createElement('li');
+                    li.textContent = cmd;
+                    commandsList.appendChild(li);
+                });
+            }
+        });
+
+        socket.on('ssh_error', function(data) {
+            connected = false;
+            term.write('\r\nError: ' + data.message + '\r\n$ ');
+        });
+
+        socket.on('ssh_response', function(data) {
+            term.write('\r\n' + data.response + '\r\n$ ');
+        });
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                appendMessage('You: ' + message, 'user-message');
+                socket.emit('chat_message', { message: message });
+                chatInput.value = '';
+            }
+        }
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        socket.on('chat_response', (data) => {
+            appendMessage(data.response, 'assistant-message');
+        });
+
+        function appendMessage(message, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + className;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Initial terminal prompt
+        term.write('$ ');
+        
+        function connectSSH() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                term.write('\r\nPlease enter both username and password.\r\n$ ');
+                return;
+            }
+            
+            socket.emit('connect_ssh', {
+                host: 'bandit.labs.overthewire.org',
+                port: 2220,
+                username: username,
+                password: password
+            });
+        }
+        
+        socket.on('notification', function(data) {
+            const notif = document.getElementById('notification');
+            notif.textContent = data.message;
+            notif.className = 'notification ' + data.type;
+            notif.style.display = 'block';
+            
+            // Hide notification after 10 seconds
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 10000);
+        });
+        
+        socket.on('progress_update', function(data) {
+            const completedLevels = data.completed_levels;
+            const levelElements = document.querySelectorAll('.level-item');
+            
+            levelElements.forEach((elem, index) => {
+                if (completedLevels.includes(index)) {
+                    elem.classList.add('completed-level');
+                }
+            });
+        });
+        
+        socket.on('password_info', function(data) {
+            const passwordDiv = document.querySelector(`#level-${data.level} .level-password`);
+            if (passwordDiv && data.password) {
+                passwordDiv.textContent = `Saved password: ${data.password}`;
+                passwordDiv.style.display = 'block';
+            }
+        });
+        
+        function loadLevel(level) {
+            currentLevel = level;
+            // ... existing level loading code ...
+            
+            // Request saved password for this level
+            socket.emit('get_saved_password', { level: level });
+        }
+        
+        // Request initial progress when page loads
+        socket.emit('get_progress');
+        
+        // Update terminal to include current level with commands
+        term.onData(function (data) {
+            socket.emit('ssh_command', {
+                command: data,
+                current_level: currentLevel
+            });
+        });
+    </script>
+</body>
+</html>
