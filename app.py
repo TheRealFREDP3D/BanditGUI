@@ -5,14 +5,16 @@ import os
 from ssh_manager import SSHManager
 from bandit_levels import BANDIT_LEVELS
 from password_manager import PasswordManager
+from chat_manager import ChatManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app)
 
-# Create SSH manager instance
+# Create manager instances
 ssh_manager = SSHManager()
 password_manager = PasswordManager()
+chat_manager = ChatManager()
 
 @app.route('/')
 def index():
@@ -31,7 +33,15 @@ def handle_ssh_connection(data):
             
         try:
             ssh_manager.connect(session_id, username, password)
-            emit('ssh_connected', {'message': 'Connected successfully'})
+            
+            # Get level number from username (e.g., bandit0 -> 0)
+            level = int(username.replace('bandit', ''))
+            level_info = BANDIT_LEVELS.get(level, {})
+            
+            emit('ssh_connected', {
+                'message': 'Connected successfully',
+                'level_info': level_info
+            })
         except Exception as e:
             emit('ssh_error', {'message': str(e)})
             
@@ -94,10 +104,24 @@ def handle_disconnect():
 
 @socketio.on('chat_message')
 def handle_chat_message(data):
-    message = data['message']
-    # TODO: Implement AI chat response
-    # For now, just echo back the message
-    emit('chat_response', {'response': f'Assistant: I received your message: {message}'})
+    try:
+        message = data.get('message', '').strip()
+        current_level = data.get('current_level', 0)
+        
+        if not message:
+            return
+            
+        # Generate response using chat manager
+        response = chat_manager.generate_response(message, current_level)
+        
+        # Send response back to client
+        emit('chat_response', {'message': response})
+        
+    except Exception as e:
+        print(f"Error handling chat message: {str(e)}")
+        emit('chat_response', {
+            'message': "I encountered an error processing your message. Please try again."
+        })
 
 if __name__ == '__main__':
     try:

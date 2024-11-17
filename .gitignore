@@ -2,6 +2,15 @@
 /Bandit
 /.workspace
 /.vscode
+<<<<<<< HEAD
 __pycache__
 /.gitignore
 /.pytest_cache  
+=======
+/__pycache__
+/.gitignore
+/Bandit-DATA
+/node_modules
+/.pytest_cache
+/.env
+>>>>>>> AI-Chatbox

@@ -67,7 +67,12 @@ class SSHManager:
             stdin, stdout, stderr = client.exec_command(command)
             output = stdout.read().decode('utf-8')
             error = stderr.read().decode('utf-8')
-            return error if error else output
+            
+            # Ensure proper line endings for terminal display
+            result = error if error else output
+            if not result.endswith('\n'):
+                result += '\n'
+            return result.replace('\n', '\r\n')
         except Exception as e:
             raise Exception(f"Failed to execute command: {str(e)}")
 
