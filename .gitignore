@@ -2,3 +2,5 @@
 /Bandit
 /.workspace
 /.vscode
+/__pycache__
+/.gitignore
