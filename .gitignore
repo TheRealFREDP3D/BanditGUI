@@ -9,6 +9,5 @@ __pycache__
 /.env
 .gitignore
 appmap.yml
-user_progress.json
 appmap.log
 user_progress.json
