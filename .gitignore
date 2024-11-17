@@ -6,3 +6,5 @@ __pycache__
 /.gitignore
 /.pytest_cache  
 /user_progress.json
+/.env
+.gitignore
