@@ -8,3 +8,5 @@ __pycache__
 /user_progress.json
 /.env
 .gitignore
+appmap.yml
+user_progress.json
