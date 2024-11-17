@@ -4,3 +4,7 @@
 /.vscode
 /__pycache__
 /.gitignore
+/Bandit-DATA
+/node_modules
+/.pytest_cache
+/.env
