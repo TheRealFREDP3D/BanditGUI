@@ -1,95 +1,95 @@
-# BanditGUI
+# Bandit CTF Learning Platform
 
-This is a Flask-based web application that allows users to connect to SSH servers, execute commands, and manage passwords for different levels. The application uses Flask-SocketIO for real-time communication between the server and the client.
-
----
-
-![v1.1 - User Interface](UI.png)
+An interactive web-based platform designed to help users learn Linux security through the OverTheWire Bandit CTF challenges.
 
 ## Features
 
--Connect to SSH servers using a username and password.  
--Execute SSH commands and display the output in real-time.  
--Automatically detect and save passwords from command outputs.  
--Track user progress through different levels.  
--Basic chat functionality with a placeholder for AI chat responses.  
+- **Interactive Terminal**: Secure SSH connection to Bandit servers
+- **Smart Chat Assistant**: Context-aware help system with markdown support
+- **Command Reference**: Color-coded command list with detailed explanations
+- **Progress Tracking**: Automatic password saving and level progression
+- **Dark Theme UI**: Modern, responsive interface optimized for learning
 
----
+## Getting Started
 
-## Installation
+### Prerequisites
 
-Clone the repository:
+- Python 3.8+
+- pip (Python package manager)
 
-```Bash
-# Insert in terminal
+### Installation
 
-git clone <https://github.com/yourusername/ssh-manager-app.git>
-cd ssh-manager-app
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/BanditGUI.git
+cd BanditGUI
+```
 
-# Create a virtual environment and activate it:
-
-python3 -m venv venv
-source venv/bin/activate
-
-# Install the required packages:
-
+2. Install dependencies:
+```bash
 pip install -r requirements.txt
+```
 
-#Run the application:
-
+3. Run the application:
+```bash
 python app.py
 ```
 
-Open your web browser and navigate to <http://localhost:5000>.
-
----
+4. Open your browser and navigate to `http://localhost:5000`
 
 ## Usage
 
-Navigate to the home page to see the list of available levels.
-Connect to an SSH server by providing a username and password.
-Execute commands in the terminal and see the output in real-time.
-Progress through levels by finding and saving passwords.
+1. **Connect to a Level**
+   - Enter your Bandit username and password
+   - Click the connect button to establish SSH connection
 
----
+2. **Terminal Commands**
+   - Use the terminal interface to enter Linux commands
+   - Click the keyboard icon or press `Ctrl+K` to view command reference
 
-## Roadmap
+3. **Get Help**
+   - Use the chat interface to ask questions
+   - Type `!help <command>` for specific command help
+   - Ask about level objectives and hints
 
-### Version 1.1
+## Key Components
 
-**AI Chat Response**: Implement AI-based responses for the chat functionality.
-User Authentication: Add user authentication to save progress across sessions.
+- **Flask Backend**: Handles web server and WebSocket connections
+- **SSH Manager**: Manages secure connections to Bandit servers
+- **Chat Manager**: Provides contextual help and guidance
+- **Password Manager**: Tracks level progress and passwords
 
-**Enhanced UI**: Improve the user interface for a better user experience.
+## Security Features
 
-### Version 1.2
+- Secure SSH connection handling
+- No storage of sensitive credentials
+- Safe password management for level progression
 
-**Multi-User Support**: Allow multiple users to connect and interact simultaneously.
+## UI/UX Features
 
-**Command History**: Implement a feature to save and display the history of executed commands.
+- Responsive dark theme design
+- Command categorization
+- Helpful tooltips and popups
+- Markdown-formatted responses
+- Intuitive chat interface
 
-**Level Hints**: Provide hints for each level to assist users in solving challenges.
+## Available Commands
 
-### Version 1.3
-
-**Mobile Support**: Optimize the application for mobile devices.
-
-**Advanced Analytics**: Add analytics to track user progress and command usage.
-
-**Custom Levels**: Allow users to create and share custom levels.
-
----
+Access the command reference by:
+- Clicking the keyboard icon
+- Using the `!help` command in chat
+- Pressing `Ctrl+K`
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your changes. Make sure to follow the coding standards and include appropriate tests.
+Contributions are welcome! Please feel free to submit pull requests.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contact
+## Acknowledgments
 
-For any questions or suggestions, please open an issue on GitHub or contact the project maintainer at <fredp3d@proton.me>.
-
-Thank you for using the SSH Manager Application! We hope it helps you manage your SSH connections and passwords effectively.
+- OverTheWire for the Bandit wargame
+- Flask and Flask-SocketIO teams
+- Paramiko SSH library developers
