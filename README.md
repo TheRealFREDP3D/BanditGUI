@@ -1,4 +1,4 @@
-# Bandit CTF Learning Platform
+# BanditGUI - Overthewire Bandit CTF Learning Platform
 
 ![ui](ui.png)
 

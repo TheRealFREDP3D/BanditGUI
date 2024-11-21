@@ -12,3 +12,8 @@ appmap.yml
 appmap.log
 user_progress.json
 /.chat
+/.venv
+/lib
+/tmp/appmap
+/appmap.log
+/appmap.yml
