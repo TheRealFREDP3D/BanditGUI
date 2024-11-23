@@ -3,11 +3,25 @@ import threading
 from typing import Optional, Dict
 
 
+class SSHError(Exception):
+    """Base exception class for SSH-related errors"""
+    pass
+
+
 class SSHManager:
     def __init__(self):
         self.connections: Dict[str, paramiko.SSHClient] = {}
         self.credentials: Dict[str, Dict[str, str]] = {}
         self.lock = threading.Lock()
+
+    # SSH-specific error messages
+    ERROR_MESSAGES = {
+        "auth_failed": "Authentication failed. Please check your username and password.",
+        "connection_failed": "Unable to establish SSH connection. Please try again.",
+        "not_connected": "Not connected to SSH server. Please reconnect.",
+        "command_failed": "Failed to execute command. Please try again.",
+        "test_failed": "Failed to verify SSH connection.",
+    }
 
     def connect(
         self,
@@ -45,7 +59,7 @@ class SSHManager:
                 # Test connection with a simple command
                 stdin, stdout, stderr = client.exec_command('echo "test"')
                 if stdout.channel.recv_exit_status() != 0:
-                    raise Exception("Failed to execute test command")
+                    raise SSHError("test_failed")
 
                 self.connections[session_id] = client
                 self.credentials[session_id] = {
@@ -57,20 +71,18 @@ class SSHManager:
                 return True
         except paramiko.AuthenticationException:
             print("Authentication failed")
-            raise Exception(
-                "Authentication failed. Please check your username and password."
-            )
+            raise SSHError("auth_failed")
         except paramiko.SSHException as e:
             print(f"SSH exception: {str(e)}")
-            raise Exception(f"SSH error: {str(e)}")
+            raise SSHError("connection_failed")
         except Exception as e:
             print(f"Failed to connect: {str(e)}")
-            raise Exception(f"Connection failed: {str(e)}")
+            raise SSHError("connection_failed")
 
     def execute_command(self, session_id: str, command: str) -> str:
         """Execute command on the SSH connection"""
         if session_id not in self.connections:
-            raise Exception("Not connected to SSH server")
+            raise SSHError("not_connected")
 
         try:
             client = self.connections[session_id]
@@ -84,7 +96,8 @@ class SSHManager:
                 result += "\n"
             return result.replace("\n", "\r\n")
         except Exception as e:
-            raise Exception(f"Failed to execute command: {str(e)}")
+            print(f"Command execution failed: {str(e)}")
+            raise SSHError("command_failed")
 
     def disconnect(self, session_id: str):
         """Close a specific SSH connection"""

@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 import paramiko
 import os
-from ssh_manager import SSHManager
+from ssh_manager import SSHManager, SSHError
 from bandit_levels import BANDIT_LEVELS
 from password_manager import PasswordManager
 from chat_manager import ChatManager
@@ -43,8 +43,12 @@ def handle_ssh_connection(data):
             "ssh_connected",
             {"message": "Connected successfully", "level_info": level_info},
         )
+    except SSHError as e:
+        error_message = ssh_manager.ERROR_MESSAGES.get(str(e), "An unexpected error occurred. Please try again.")
+        emit("ssh_error", {"message": error_message})
     except Exception as e:
-        emit("ssh_error", {"message": f"Connection error: {e}"})
+        print(f"Unexpected error during SSH connection: {e}")
+        emit("ssh_error", {"message": "An unexpected error occurred. Please try again."})
 
 
 @socketio.on("ssh_command")
@@ -81,9 +85,12 @@ def handle_ssh_command(data):
 
         # Send the command output to the terminal
         emit("terminal_output", {"output": output})
-
+    except SSHError as e:
+        error_message = ssh_manager.ERROR_MESSAGES.get(str(e), "An unexpected error occurred. Please try again.")
+        emit("terminal_output", {"output": f"{error_message}\r\n"})
     except Exception as e:
-        emit("terminal_output", {"output": f"Error: {e}\r\n"})
+        print(f"Unexpected error during command execution: {e}")
+        emit("terminal_output", {"output": "An unexpected error occurred. Please try again.\r\n"})
 
 
 @socketio.on("get_progress")
