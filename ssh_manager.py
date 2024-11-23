@@ -2,13 +2,21 @@ import paramiko
 import threading
 from typing import Optional, Dict
 
+
 class SSHManager:
     def __init__(self):
         self.connections: Dict[str, paramiko.SSHClient] = {}
         self.credentials: Dict[str, Dict[str, str]] = {}
         self.lock = threading.Lock()
 
-    def connect(self, session_id: str, username: str, password: str, host: str = 'bandit.labs.overthewire.org', port: int = 2220) -> bool:
+    def connect(
+        self,
+        session_id: str,
+        username: str,
+        password: str,
+        host: str = "bandit.labs.overthewire.org",
+        port: int = 2220,
+    ) -> bool:
         """Connect to SSH server and store the connection"""
         try:
             with self.lock:
@@ -31,9 +39,9 @@ class SSHManager:
                     password=password,
                     timeout=10,
                     allow_agent=False,
-                    look_for_keys=False
+                    look_for_keys=False,
                 )
-                
+
                 # Test connection with a simple command
                 stdin, stdout, stderr = client.exec_command('echo "test"')
                 if stdout.channel.recv_exit_status() != 0:
@@ -41,15 +49,17 @@ class SSHManager:
 
                 self.connections[session_id] = client
                 self.credentials[session_id] = {
-                    'username': username,
-                    'password': password,
-                    'host': host,
-                    'port': port
+                    "username": username,
+                    "password": password,
+                    "host": host,
+                    "port": port,
                 }
                 return True
         except paramiko.AuthenticationException:
             print("Authentication failed")
-            raise Exception("Authentication failed. Please check your username and password.")
+            raise Exception(
+                "Authentication failed. Please check your username and password."
+            )
         except paramiko.SSHException as e:
             print(f"SSH exception: {str(e)}")
             raise Exception(f"SSH error: {str(e)}")
@@ -65,14 +75,14 @@ class SSHManager:
         try:
             client = self.connections[session_id]
             stdin, stdout, stderr = client.exec_command(command)
-            output = stdout.read().decode('utf-8')
-            error = stderr.read().decode('utf-8')
-            
+            output = stdout.read().decode("utf-8")
+            error = stderr.read().decode("utf-8")
+
             # Ensure proper line endings for terminal display
             result = error if error else output
-            if not result.endswith('\n'):
-                result += '\n'
-            return result.replace('\n', '\r\n')
+            if not result.endswith("\n"):
+                result += "\n"
+            return result.replace("\n", "\r\n")
         except Exception as e:
             raise Exception(f"Failed to execute command: {str(e)}")
 
