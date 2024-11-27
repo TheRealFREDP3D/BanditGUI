@@ -1,20 +1,50 @@
+# Virtual Environment
 /venv
+/.venv
+/env
+/.env
+
+# Project-specific
 /Bandit
 /.workspace
-/.vscode
-__pycache__
-/.gitignore
-/.pytest_cache  
 /user_progress.json
-/.env
-.gitignore
+/.chat
+/lib
+/tmp
+
+# IDE and Editor files
+/.vscode
+/.idea
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+/.pytest_cache
+.Python
+*.egg-info/
+dist/
+build/
+
+# Logs and debugging
+*.log
 appmap.yml
 appmap.log
-user_progress.json
-/.chat
-/.venv
-/lib
-/tmp/appmap
-/appmap.log
-/appmap.yml
-user_progress.json
+
+# Security and Secrets
+*.pem
+*.key
+*.crt
+*.cert
+*.password
+secrets.yaml
+secrets.yml
+config.local.yaml
+config.local.yml
+
+# OS-specific
+.DS_Store
+Thumbs.db
