@@ -1,6 +1,4 @@
-# BanditGUI - Overthewire Bandit CTF Learning Platform
-
-![ui](ui.png)
+# Bandit CTF Learning Platform
 
 An interactive web-based platform designed to help users learn Linux security through the OverTheWire Bandit CTF challenges.
 
@@ -22,20 +20,17 @@ An interactive web-based platform designed to help users learn Linux security th
 ### Installation
 
 1. Clone the repository:
-
 ```bash
 git clone https://github.com/yourusername/BanditGUI.git
 cd BanditGUI
 ```
 
 2. Install dependencies:
-
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Run the application:
-
 ```bash
 python app.py
 ```
@@ -81,7 +76,6 @@ python app.py
 ## Available Commands
 
 Access the command reference by:
-
 - Clicking the keyboard icon
 - Using the `!help` command in chat
 - Pressing `Ctrl+K`

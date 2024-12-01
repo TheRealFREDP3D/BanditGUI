@@ -1,38 +1,21 @@
-"""
-PasswordManager manages user passwords for different levels in a game, allowing for loading, saving, and checking passwords. It tracks user progress through levels and provides methods to retrieve passwords and check completion status.
-
-Attributes:
-    passwords_file (str): The filename where passwords are stored.
-    known_passwords (dict): A dictionary of known passwords for each level.
-
-Methods:
-    _load_passwords: Loads saved passwords from a file.
-    _save_passwords: Saves passwords to a file.
-    check_output_for_password(level, output): Checks if the output contains a valid password for the next level.
-    get_password(level): Retrieves the password for a specific level.
-    has_completed_level(level): Checks if the user has completed a specific level.
-    get_progress(): Returns the user's progress, including completed levels and the highest level reached.
-"""
-
 import json
 import os
 from pathlib import Path
-
 
 class PasswordManager:
     def __init__(self):
         self.passwords_file = "user_progress.json"
         self.known_passwords = self._load_passwords()
-
+        
         # Known password for level 0
-        self.known_passwords.setdefault("bandit0", "bandit0")
+        self.known_passwords.setdefault('bandit0', 'bandit0')
         self._save_passwords()
 
     def _load_passwords(self):
         """Load saved passwords from file"""
         try:
             if os.path.exists(self.passwords_file):
-                with open(self.passwords_file, "r") as f:
+                with open(self.passwords_file, 'r') as f:
                     return json.load(f)
         except Exception as e:
             print(f"Error loading passwords: {e}")
@@ -41,7 +24,7 @@ class PasswordManager:
     def _save_passwords(self):
         """Save passwords to file"""
         try:
-            with open(self.passwords_file, "w") as f:
+            with open(self.passwords_file, 'w') as f:
                 json.dump(self.known_passwords, f, indent=4)
         except Exception as e:
             print(f"Error saving passwords: {e}")
@@ -53,37 +36,34 @@ class PasswordManager:
         """
         # Clean the output
         output = output.strip()
-
+        
         # If output is exactly 32 characters long, it might be a password
-        if len(output) == 32 and all(
-            c in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-            for c in output
-        ):
-            next_level = f"bandit{level + 1}"
+        if len(output) == 32 and all(c in '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' for c in output):
+            next_level = f'bandit{level + 1}'
             self.known_passwords[next_level] = output
             self._save_passwords()
             return True, output
-
-        return False, ""
+            
+        return False, ''
 
     def get_password(self, level: int) -> str:
         """Get password for a specific level"""
-        return self.known_passwords.get(f"bandit{level}", "")
+        return self.known_passwords.get(f'bandit{level}', '')
 
     def has_completed_level(self, level: int) -> bool:
         """Check if user has completed a specific level"""
-        return f"bandit{level + 1}" in self.known_passwords
+        return f'bandit{level + 1}' in self.known_passwords
 
     def get_progress(self) -> dict:
         """Get user's progress (completed levels)"""
         return {
-            "completed_levels": [
-                int(k.replace("bandit", "")) - 1
-                for k in self.known_passwords.keys()
-                if k != "bandit0"
+            'completed_levels': [
+                int(k.replace('bandit', '')) - 1 
+                for k in self.known_passwords.keys() 
+                if k != 'bandit0'
             ],
-            "highest_level": max(
-                [int(k.replace("bandit", "")) for k in self.known_passwords.keys()]
-                + [0]
-            ),
+            'highest_level': max([
+                int(k.replace('bandit', '')) 
+                for k in self.known_passwords.keys()
+            ] + [0])
         }
