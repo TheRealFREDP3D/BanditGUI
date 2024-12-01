@@ -132,6 +132,24 @@ ssh -i keyfile username@hostname
         # Convert message to lowercase for easier matching
         message_lower = user_message.lower()
         
+        # Check if it's a level info request
+        if message_lower.startswith("!level"):
+            from bandit_levels import BANDIT_LEVELS
+            level_info = BANDIT_LEVELS.get(current_level, {})
+            return f"""# Level {current_level} Information
+
+## Description
+{level_info.get('description', 'No description available.')}
+
+## Objective
+{level_info.get('objective', 'No objective available.')}
+
+## Hints
+{chr(10).join(['- ' + hint for hint in level_info.get('hints', [])])}
+
+## Useful Commands
+{chr(10).join(['- `' + cmd + '`' for cmd in level_info.get('useful_commands', [])])}"""
+
         # Check if it's a command help request
         if user_message.startswith("!help"):
             command = user_message.replace("!help", "").strip()
@@ -139,7 +157,11 @@ ssh -i keyfile username@hostname
                 return self.get_command_help(command)
             else:
                 return """# Available Commands Help
-Use `!help <command>` to get help for specific commands. Example: `!help ls`
+Use `!help <command>` to get help for specific commands.
+
+## Chat Commands
+- `!help <command>` - Get detailed help
+- `!level` - Display current level info
 
 ## Common Commands
 - `ls` - List directory contents
@@ -148,7 +170,7 @@ Use `!help <command>` to get help for specific commands. Example: `!help ls`
 - `ssh` - Connect to remote server
 - `grep` - Search text patterns
 
-Type `!help` followed by any of these commands for detailed help."""
+Type `!help` followed by any command for detailed help."""
 
         # Get level-specific help
         from bandit_levels import BANDIT_LEVELS
