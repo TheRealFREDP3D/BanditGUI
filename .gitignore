@@ -1,50 +1,16 @@
-# Virtual Environment
 /venv
-/.venv
-/env
-/.env
-
-# Project-specific
 /Bandit
 /.workspace
-/user_progress.json
-/.chat
-/lib
-/tmp
-
-# IDE and Editor files
 /.vscode
-/.idea
-*.swp
-*.swo
-*~
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-/.pytest_cache
-.Python
-*.egg-info/
-dist/
-build/
-
-# Logs and debugging
-*.log
-appmap.yml
+__pycache__
+/.gitignore
+/.pytest_cache  
+/tmp
+/lib
+/.venv
+/.chat
+/__pycache__
+.env
 appmap.log
-
-# Security and Secrets
-*.pem
-*.key
-*.crt
-*.cert
-*.password
-secrets.yaml
-secrets.yml
-config.local.yaml
-config.local.yml
-
-# OS-specific
-.DS_Store
-Thumbs.db
+package.json
+user_progress.json
