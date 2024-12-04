@@ -2382,3 +2382,4 @@ node_modules/tslib/modules/index.js
 .idx/dev.nix
 package-lock.json
 .gitignore
+.idx/integrations.json
