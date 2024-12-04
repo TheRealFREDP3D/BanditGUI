@@ -29,7 +29,7 @@ class SSHManager:
                     port=port,
                     username=username,
                     password=password,
-                    timeout=100,
+                    timeout=30,
                     allow_agent=False,
                     look_for_keys=False
                 )
