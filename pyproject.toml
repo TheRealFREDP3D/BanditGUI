@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "banditgui"
-version = "0.1.0"
-description = ""
+version = "1.3.1"
+description = "An interactive web-based platform designed to help users learn Linux security through the OverTheWire Bandit CTF challenges."
 authors = ["Frederick Pellerin <fredp3d@proton.me>"]
 readme = "README.md"
 
