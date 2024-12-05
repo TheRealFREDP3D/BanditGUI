@@ -2383,3 +2383,16 @@ node_modules/tslib/modules/index.js
 package-lock.json
 .gitignore
 .idx/integrations.json
+/.comment
+/user_progress.json
+/.dependencygraph
+/appmap.log
+/package-lock.json
+/package.json
+/Pipfile
+/Pipfile.lock
+/poetry.lock
+Pipfile
+tests/pytest_app.py
+tests/unittest_app.py
+tests/__init__.py
