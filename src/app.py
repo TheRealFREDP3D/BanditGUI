@@ -9,10 +9,10 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 
 import os
-from ssh_manager import SSHManager
-from bandit_levels import BANDIT_LEVELS
-from password_manager import PasswordManager
-from chat_manager import ChatManager
+from .ssh_manager import SSHManager
+from .bandit_levels import BANDIT_LEVELS
+from .password_manager import PasswordManager
+from .chat_manager import ChatManager
 
 # Creates a new Flask application instance with the name of the current
 # module (`__name__`). This is the main entry point for the Flask web
@@ -102,45 +102,50 @@ def handle_ssh_command(data):
 
 @socketio.on("get_progress")
 def handle_get_progress():
-    """Send user's progress"""
+    """Send the user's progress information."""
     emit("progress_update", password_manager.get_progress())
 
 
-@socketio.on("get_saved_password")
+@socketio.on("get_password")
 def handle_get_password(data):
-    """Get saved password for a level"""
-    level = data.get("level", 0)
-    password = password_manager.get_password(level)
-    emit("password_info", {"level": level, "password": password})
+    """Get the saved password for a specific level."""
+    level = data.get("level")
+    if level is not None:
+        emit("password_info", password_manager.get_password(level))
 
 
 @socketio.on("disconnect")
 def handle_disconnect():
-    session_id = request.sid
-    ssh_manager.disconnect(session_id)
+    """Clean up SSH connection on disconnect."""
+    ssh_manager.disconnect(request.sid)
 
 
 @socketio.on("chat_message")
 def handle_chat_message(data):
+    """Handle incoming chat messages."""
     try:
         message = data.get("message", "").strip()
-        current_level = data.get("current_level", 0)
-
         if not message:
             return
 
-        # Generate response using chat manager
-        response = chat_manager.generate_response(message, current_level)
+        # Get response from chat manager
+        response = chat_manager.get_response(message)
 
         # Send response back to client
-        emit("chat_response", {"message": response})
-
-    except Exception as e:
-        print(f"Error handling chat message: {str(e)}")
         emit(
             "chat_response",
             {
-                "message": "I encountered an error processing your message. Please try again."
+                "message": response,
+                "type": "assistant",
+            },
+        )
+
+    except Exception as e:
+        emit(
+            "chat_response",
+            {
+                "message": f"Error processing message: {str(e)}",
+                "type": "error",
             },
         )
 
@@ -148,5 +153,5 @@ def handle_chat_message(data):
 if __name__ == "__main__":
     try:
         socketio.run(app, debug=True, port=8080)
-    finally:
-        ssh_manager.close_all()
+    except Exception as e:
+        print(f"Error starting server: {str(e)}")
