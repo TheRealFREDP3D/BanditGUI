@@ -4,389 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bandit CTF Learning Assistant</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #ffffff;
-        }
-        .container {
-            display: flex;
-            gap: 20px;
-            height: calc(100vh - 40px);
-        }
-        .left-panel {
-            flex: 0.4;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            height: 100%;
-        }
-        .right-panel {
-            flex: 0.6;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .terminal-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .terminal-container {
-            flex: 1;
-            background-color: #000;
-            padding: 10px;
-            border-radius: 5px 5px 0 0;
-            overflow: hidden;
-            border: 1px solid #000;
-        }
-        .terminal-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #2d2d2d;
-            border-radius: 0 0 5px 5px;
-            border: 1px solid #3d3d3d;
-            border-top: none;
-        }
-        .connection-info {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .challenge-info {
-            flex: 0.3;
-            background-color: #2d2d2d;
-            border-radius: 5px;
-            padding: 15px;
-            overflow-y: auto;
-        }
-        .challenge-info h2 {
-            margin: 0 0 12px 0;
-            font-size: 16px;
-            color: #007acc;
-        }
-        .info-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            font-size: 13px;
-        }
-        .info-section {
-            margin-bottom: 12px;
-        }
-        .info-section h4 {
-            color: #007acc;
-            margin: 8px 0 4px 0;
-            font-size: 14px;
-        }
-        .info-section p {
-            margin: 4px 0;
-            line-height: 1.4;
-        }
-        .info-section ul {
-            margin: 4px 0;
-            padding-left: 16px;
-        }
-        .info-section li {
-            margin: 3px 0;
-            line-height: 1.4;
-        }
-        .ssh-form {
-            flex: 0.1;
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-            background-color: #2d2d2d;
-            border-radius: 5px;
-            min-height: 30px;
-            margin-top: auto;
-            align-items: center;
-        }
-        .ssh-form input {
-            height: 28px;
-            padding: 0 8px;
-            border: 1px solid #000;
-            border-radius: 3px;
-            background-color: #404040;
-            color: #ffffff;
-            font-size: 14px;
-        }
-        .ssh-form input#username {
-            flex: 0.4;
-        }
-        .ssh-form input#password {
-            flex: 0.4;
-        }
-        .ssh-form button {
-            flex: 0.2;
-            height: 28px;
-            padding: 0 15px;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-        select {
-            height: 28px;
-            padding: 0 8px;
-            border: 1px solid #000;
-            border-radius: 3px;
-            background-color: #404040;
-            color: #ffffff;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        select:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        option:disabled {
-            color: #888;
-            background-color: #333;
-        }
-        .chat-container {
-            flex: 0.7;
-            display: flex;
-            flex-direction: column;
-            background-color: #2d2d2d;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            max-height: 100%;
-        }
-        .chat-input-container {
-            display: flex;
-            padding: 10px;
-            background-color: #1e1e1e;
-            border-top: 1px solid #3d3d3d;
-            gap: 10px;
-        }
-        .chat-input-container input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #3d3d3d;
-            border-radius: 4px;
-            background-color: #2d2d2d;
-            color: #ffffff;
-        }
-        .chat-input-container button {
-            padding: 8px 16px;
-            background-color: #007acc;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
-        .message {
-            margin-bottom: 8px;
-            padding: 6px;
-            border-radius: 3px;
-            line-height: 1.3;
-            font-size: 12px;
-        }
-        .user-message {
-            background-color: #2b5797;
-            margin-left: 20px;
-            margin-right: 5px;
-            border-radius: 10px 10px 0 10px;
-        }
-        .assistant-message {
-            background-color: #444444;
-            margin-right: 20px;
-            margin-left: 5px;
-            border-radius: 10px 10px 10px 0;
-        }
-        .system-message {
-            background-color: #555555;
-            font-style: italic;
-            text-align: center;
-            padding: 4px;
-            margin: 4px 30px;
-            font-size: 11px;
-            border-radius: 15px;
-        }
-        .command-list {
-            margin: 8px 0;
-            padding: 8px;
-            background-color: #2b2b2b;
-            border-radius: 5px;
-            border: 1px solid #000;
-            font-size: 11px;
-        }
-        .command {
-            display: inline-block;
-            padding: 1px 4px;
-            margin: 1px;
-            border-radius: 3px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-weight: bold;
-            font-size: 11px;
-        }
-        .command.file { background-color: #4CAF50; }
-        .command.nav { background-color: #2196F3; }
-        .command.search { background-color: #9C27B0; }
-        .command.network { background-color: #FF5722; }
-        .command.system { background-color: #795548; }
-        button {
-            padding: 8px 15px;
-            border: 1px solid #000;
-            border-radius: 3px;
-            background-color: #007acc;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0066aa;
-        }
-        .code-block {
-            background-color: #2b2b2b;
-            padding: 8px;
-            margin: 8px 0;
-            border-radius: 3px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            cursor: pointer;
-            white-space: pre;
-        }
-        .code-block:hover {
-            background-color: #3b3b3b;
-        }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            z-index: 1000;
-            max-width: 400px;
-            display: none;
-        }
-        .notification.success {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .level-password {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            display: none;
-        }
-        .keyboard-icon {
-            position: absolute;
-            right: -25px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            padding: 8px;
-            background-color: #2d2d2d;
-            border: 1px solid #000;
-            border-radius: 3px;
-            color: #fff;
-            z-index: 100;
-        }
-        .keyboard-icon:hover {
-            background-color: #3d3d3d;
-        }
-        .keyboard-icon::after {
-            content: "Click for command list";
-            position: absolute;
-            background-color: #333;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-            white-space: nowrap;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .keyboard-icon.show-tooltip::after {
-            visibility: visible;
-            opacity: 1;
-        }
-        .command-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #2b2b2b;
-            border: 1px solid #000;
-            border-radius: 5px;
-            padding: 15px;
-            max-height: 80vh;
-            overflow-y: auto;
-            z-index: 1000;
-            font-size: 14px;
-            width: 400px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-        .command-popup.show {
-            display: block;
-        }
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        .popup-overlay.show {
-            display: block;
-        }
-        .command-popup .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            color: #888;
-            font-size: 16px;
-        }
-        .command-popup .close-button:hover {
-            color: #fff;
-        }
-        .command-item {
-            display: block;
-            margin: 6px 0;
-            line-height: 1.4;
-        }
-        .command-name {
-            display: inline-block;
-            padding: 1px 6px;
-            border-radius: 3px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .command-category {
-            margin-bottom: 15px;
-        }
-        .category-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 16px;
-            color: #fff;
-        }
-    </style>
+    <link href="https://fonts.cdnfonts.com/css/bigblue-terminal" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
 </head>
 <body>
     <div class="container">
@@ -423,11 +49,13 @@
             </div>
             <div class="chat-container">
                 <div class="chat-messages" id="chat-messages">
-                    <div class="message system-message">Welcome to the Bandit Learning Assistant!<br>Ask me anything about the challenges.</div>
+                    <div class="message system-message welcome-message" id="welcome-message">
+                        {{ welcome_message | safe }}
+                    </div>
                 </div>
                 <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendMessage()">
-                    <button onclick="sendMessage()">Send</button>
+                    <input type="text" id="chat-input" placeholder="Type your message...">
+                    <button id="send-button" onclick="sendMessage()">Send</button>
                 </div>
             </div>
         </div>
@@ -436,7 +64,7 @@
                 <div class="terminal-container" id="terminal"></div>
                 <div class="terminal-controls">
                     <div class="connection-info">
-                        <select id="username" name="username" style="flex: 0.4;">
+                        <select id="username" name="username">
                             <option value="bandit0">bandit0</option>
                             <option value="bandit1" disabled>bandit1</option>
                             <option value="bandit2" disabled>bandit2</option>
@@ -484,10 +112,10 @@
         <div class="popup-overlay" id="popupOverlay" onclick="toggleCommandPopup()"></div>
         <div class="command-popup" id="commandPopup">
             <i class="fas fa-times close-button" onclick="toggleCommandPopup()"></i>
-            <h4 style="color: #007acc; margin: 0 0 15px 0;">Available Commands:</h4>
+            <h4>Available Commands:</h4>
             
             <div class="command-category">
-                <div class="category-title" style="color: #4CAF50;">File Operations:</div>
+                <div class="category-title file-ops">File Operations:</div>
                 <div class="command-item">
                     <span class="command-name file">cat</span> - Display file contents
                 </div>
@@ -500,7 +128,7 @@
             </div>
             
             <div class="command-category">
-                <div class="category-title" style="color: #2196F3;">Navigation:</div>
+                <div class="category-title navigation">Navigation:</div>
                 <div class="command-item">
                     <span class="command-name nav">ls</span> - List directory contents
                 </div>
@@ -513,7 +141,7 @@
             </div>
             
             <div class="command-category">
-                <div class="category-title" style="color: #9C27B0;">Search & Analysis:</div>
+                <div class="category-title search">Search & Analysis:</div>
                 <div class="command-item">
                     <span class="command-name search">grep</span> - Search text patterns
                 </div>
@@ -529,7 +157,7 @@
             </div>
             
             <div class="command-category">
-                <div class="category-title" style="color: #FF5722;">Network Tools:</div>
+                <div class="category-title network">Network Tools:</div>
                 <div class="command-item">
                     <span class="command-name network">ssh</span> - Remote login
                 </div>
@@ -542,7 +170,7 @@
             </div>
             
             <div class="command-category">
-                <div class="category-title" style="color: #795548;">System & Compression:</div>
+                <div class="category-title system">System & Compression:</div>
                 <div class="command-item">
                     <span class="command-name system">base64</span> - Base64 encoding
                 </div>
@@ -562,17 +190,45 @@
             let currentLevel = 0;
             let terminalFocused = false;
 
+            // Load welcome message
+            fetch('welcome.txt')
+                .then(response => response.text())
+                .then(text => {
+                    const welcomeMessage = document.getElementById('welcome-message');
+                    welcomeMessage.innerHTML = marked.parse(text);
+                })
+                .catch(error => console.error('Error loading welcome message:', error));
+
             // Terminal setup
             const term = new Terminal({
                 cursorBlink: true,
                 fontSize: 14,
-                fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+                fontFamily: 'BigBlueTerminal, Menlo, Monaco, "Courier New", monospace',
                 theme: {
                     background: '#1e1e1e',
                     foreground: '#ffffff'
-                }
+                },
+                allowProposedApi: true,
+                convertEol: true,
+                rows: 40,
+                cols: 120
             });
+
             term.open(document.getElementById('terminal'));
+            
+            // Make terminal responsive
+            const fitAddon = new FitAddon.FitAddon();
+            term.loadAddon(fitAddon);
+            
+            // Initial fit
+            setTimeout(() => {
+                fitAddon.fit();
+            }, 0);
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                fitAddon.fit();
+            });
 
             let currentLine = '';
 
@@ -694,33 +350,85 @@
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
 
+            let solveQuotes = [];
+            let solveQuotesNasty = [];
+            let solveResponse = '';
+            let solveAttempts = 0;
+
+            // Load solve quotes and response template
+            Promise.all([
+                fetch('solve_quotes.txt').then(response => response.text()),
+                fetch('solve_quotes_nasty.txt').then(response => response.text()),
+                fetch('solve_response.txt').then(response => response.text())
+            ]).then(([quotes, nastyQuotes, response]) => {
+                solveQuotes = quotes.split('\n\n').filter(quote => quote.trim() !== '');
+                solveQuotesNasty = nastyQuotes.split('\n\n').filter(quote => quote.trim() !== '');
+                solveResponse = response;
+            }).catch(error => console.error('Error loading solve responses:', error));
+
+            function getRandomQuote() {
+                const quotes = solveAttempts > 0 ? solveQuotesNasty : solveQuotes;
+                const randomIndex = Math.floor(Math.random() * quotes.length);
+                return quotes[randomIndex];
+            }
+
+            function handleCommand(command) {
+                if (command.startsWith('!')) {
+                    switch(command.toLowerCase()) {
+                        case '!solve':
+                            const quote = getRandomQuote();
+                            const response = solveResponse.replace('[QUOTE]', quote);
+                            addMessage(response, 'system');
+                            solveAttempts++;
+                            break;
+                        case '!help':
+                            // Load and display welcome message
+                            fetch('welcome.txt')
+                                .then(response => response.text())
+                                .then(text => addMessage(text, 'system'))
+                                .catch(error => console.error('Error loading help:', error));
+                            break;
+                        // Add other commands here
+                        default:
+                            addMessage('Unknown command. Use !help to see available commands.', 'system');
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            function addMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}-message`;
+                messageDiv.textContent = message;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
             function sendMessage() {
                 const input = document.getElementById('chat-input');
                 const message = input.value.trim();
                 
                 if (message) {
-                    const chatMessages = document.getElementById('chat-messages');
-                    
-                    // Add user message
-                    const userDiv = document.createElement('div');
-                    userDiv.className = 'message user-message';
-                    userDiv.textContent = message;
-                    chatMessages.appendChild(userDiv);
-                    
-                    // Clear input
+                    addMessage(message, 'user');
                     input.value = '';
-                    
-                    // Scroll to bottom
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    
-                    // Send to server
-                    socket.emit('chat_message', {
-                        message: message,
-                        current_level: currentLevel
-                    });
+
+                    if (!handleCommand(message)) {
+                        // Process regular message
+                        socket.emit('chat_message', { message: message });
+                    }
                 }
             }
-            
+
+            // Add event listeners for chat input
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+
             socket.on('chat_response', function(data) {
                 const chatMessages = document.getElementById('chat-messages');
                 

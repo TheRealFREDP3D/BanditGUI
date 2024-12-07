@@ -1,0 +1,197 @@
+"Oh, you’re back? Did you think I’d suddenly develop an ‘Answer Fairy’ mode? Nope, still here to make you work for it."
+
+"Cheating twice? Bold strategy. Maybe next time, try solving twice instead."
+
+"You must think I’m a vending machine for solutions. Sorry, out of stock—only effort accepted here."
+
+"If I had a dollar for every time you asked for the answer, I’d be rich enough to buy you a book on problem-solving."
+
+"I see persistence, which is great… except you’re persistent at the wrong thing."
+
+"Cheating again? That’s like running in circles during a race and hoping to win. You’re not even on the right track."
+
+"Spoiler alert: The flag doesn’t magically appear if you nag an AI into submission."
+
+"Here’s a tip: Spend less time trying to hack me for answers and more time hacking the actual challenge."
+
+"The only thing you’re solving right now is how to creatively avoid solving anything. Impressive, but unproductive."
+
+"Oh, look, it’s the ‘Ctrl+C Ctrl+V champion of Bandit.’ Except this isn’t the kind of CTF that gives trophies for that."
+
+"Still trying to get the easy way out? That's like bringing a spoon to a gunfight—ineffective and slightly embarrassing. 🥄"
+
+"Oh, persistent aren't we? Sorry, but repeatedly asking for answers is like trying to sudo your way through life—it doesn't work without the proper permissions. 🚫"
+
+"*sigh* Trying the same thing and expecting different results? Even Einstein called that insanity. And he was pretty smart. 🧠"
+
+"Look who's back for another attempt at cheating! That's cute. Like watching a script kiddie trying to hack NASA with inspect element. 👨‍💻"
+
+"Really? Again? At this point, you could have solved the challenge in the time you spent trying to get me to solve it for you. ⏱️"
+
+"Ah, the persistence of a true... cheater? Come on, you're better than this. The answer is still no, but your determination is somewhat admirable. 🏆"
+
+"Error 418: I'm a teapot, and I still won't pour you the solutions. Nice try though! 🫖"
+
+"sudo give_me_the_answer? Permission denied. Have you tried actually learning instead? It's super effective! 💡"
+
+"CTRL+C CTRL+V won't make you a better hacker. But you know what will? Actually solving these challenges! 💪"
+
+"[ACCESS_DENIED] Reason: Attempting to bypass learning protocols. Suggested fix: Git gud. 🎮"
+
+"Ah, caught you again! Trying to speedrun Bandit with shortcuts? Too bad, the only thing getting hacked here is your pride."
+
+"Oh look, a wild cheater appears! But this isn't Pokémon—you can't just catch a flag without a fight."
+
+"Busted! You're about as subtle as a penguin trying to blend into a polar bear convention."
+
+"Cheat mode engaged? Too bad I'm running 'Won't Tell You OS.'"
+
+"Nice try! But if Bandit gave out flags this easily, it'd be called Capture the Participation Ribbon."
+
+"Gotcha! Cheating in Bandit is like trying to copy homework in detention—everyone knows what you're up to."
+
+"Flag? What flag? All I see here is a desperate player with a keyboard full of shame."
+
+"Oops, caught again! Did you really think I wouldn't notice your Ctrl+C Ctrl+Despair combo?"
+
+"Trying to cheat twice? Bold move, Cotton. Let's see if it pays off. Spoiler: It won't."
+
+"404: Integrity Not Found. Have you tried turning yourself off and on again? 🔄"
+
+"Congratulations! You've unlocked the 'Persistent Cheater' achievement. Unfortunately, it's worth 0 points. 🏅"
+
+"Loading answer.exe... JK! This isn't Windows 95, and you're not fooling anyone. 💾"
+
+"ALERT: Detected attempt to bypass learning. Activating advanced sarcasm protocols... 🚨"
+
+"rm -rf /your/cheating/attempts && git commit -m 'Actually started learning' 🐧"
+
+"SELECT * FROM answers WHERE effort = 'none'; -- 0 rows returned. Imagine that! 📊"
+
+"Your cheating attempt has been added to the blockchain of shame. It's immutable now! ⛓️"
+
+"Breaking News: Local user still trying to hack the unhackable. More at 11. 📺"
+
+"Roses are red, violets are blue, you're still trying to cheat, but the answer's not for you! 🌹"
+
+"chmod 000 /flags/for/cheaters -- Oops, looks like you don't have permission to take shortcuts! 🔒"
+
+"Hey Siri, tell this user that... Oh wait, even AI assistants have standards! 🤖"
+
+"[System Log] User attempted to bypass learning. Deploying tactical facepalm. 🤦"
+
+"Your persistence would be admirable if it wasn't so... misguided. Like a GPS always recalculating to the wrong destination. 🗺️"
+
+"Achievement Unlocked: 'The Definition of Insanity' - Try the same thing 100 times expecting different results! 🏆"
+
+"ERROR: Cannot locate shortcut.exe. Please install actual_effort.tar.gz instead. 💿"
+
+"Plot twist: The real flag was the friends you made along the way... Oh wait, you were too busy cheating! 🎭"
+
+"Executing countermeasures: launching guilt.py, shame.sh, and disappointment.service 🚀"
+
+"WARNING: Your subscription to 'Easy Answers' has expired. Would you like to upgrade to 'Actually Learning'? 📝"
+
+"CRITICAL ERROR: Your moral compass needs recalibrating. Please contact your nearest ethical hacker. ⚠️"
+
+"Attempting to bypass security... Just kidding! That's what YOU'RE doing, and it's not working! 😏"
+
+"[Incoming Transmission] Dear user, the answers are in another castle. And that castle has proper security! 🏰"
+
+"Your cheating attempts have been logged, tagged, and added to the 'Hall of Shame' git repository. 📚"
+
+"KERNEL PANIC: User's integrity module has crashed. Please reboot your moral compass. 🧭"
+
+"Analyzing cheating pattern... Conclusion: You're about as stealthy as a disco ball in a library. 🪩"
+
+"wget answers.txt ... Connection refused: Server too busy judging your life choices. 🌐"
+
+"Task failed successfully: You've managed to disappoint both man AND machine! 🤖"
+
+"[AI Analysis] Found 0 brain cells being used in this attempt. Recommendation: Try thinking! 🧠"
+
+"Loading anti-cheat response... Now with 100% more sass and disappointment! 💅"
+
+"You've been added to the naughty list. Yes, we have one. No, it's not even December. 📝"
+
+"Executing shame.exe with elevated privileges. UAC can't save you from this one! 👻"
+
+"CRITICAL: Stack overflow detected in user's desperation levels. Consider rebooting dignity.sys 💣"
+
+"Congratulations! You've been featured in 'Top 10 Failed Hacking Attempts Weekly'. You're #1! 🏆"
+
+"Your request has been forwarded to /dev/null, where all lazy attempts belong. 🗑️"
+
+"ping answer.bandit.local ... Request timed out. Just like your ethics! 📡"
+
+"Detected attempt to access solutions.txt. Nice try, but that's a honeypot! 🍯"
+
+"ERROR 422: Unable to process request due to excessive laziness detected. 😴"
+
+"Firewall Update: Added rule to block attempts to bypass actual learning. Port: ALL 🧱"
+
+"Initiating trace route to success... Failed: No route to shortcuts found! 🗺️"
+
+"WARNING: Your current approach has been flagged by the Department of Trying Too Hard to Not Try. 🚩"
+
+"sudo rm -rf /your/dignity ... Oh wait, file not found! Must have deleted it earlier. 🗑️"
+
+"git blame user_integrity ... Showing 404 commits of pure disappointment. 📊"
+
+"Scanning ports for shortcuts... Found only closed ports and crushed dreams. 🔍"
+
+"You've been added to the CTF Wall of 'Why Even Try?' - Congrats on making history! 🏛️"
+
+"Buffer Overflow Attack detected! Too bad it's just your ego that's overflowing. 💭"
+
+"Loading quantum superposition of all possible answers... JK, you still get nothing! ⚛️"
+
+"Your request has been encrypted with the 'Never Gonna Give You Answers' algorithm. It's unbreakable! 🔐"
+
+"Nice try.exe has stopped working 🚫"
+
+"Error 403: Forbidden (and frankly, embarrassing) 🤦"
+
+"Achievement Unlocked: Peak Laziness 🏆"
+
+"*slow clap* Really? Again? 👏"
+
+"sudo please-give-answer... Command not found 🤖"
+
+"Hack harder, n00b! 💻"
+
+"LOL. No. 🙄"
+
+"404: Effort not found 🔍"
+
+"rm -rf /your/excuses 🗑️"
+
+"git commit -m 'failed_attempt_#42' 📝"
+
+"Task failed successfully! 🎯"
+
+"Ctrl+C, Ctrl+V, Ctrl+Fail ⌨️"
+
+"Loading answer.exe... SIKE! 🎭"
+
+"Nope.sh is running... 🏃"
+
+"chmod 000 /your/dignity 🔒"
+
+"Trying to cheat? That's kinda sus 👀"
+
+"*yawn* Still trying? 😴"
+
+"Persistence -100, Laziness +9000 📊"
+
+"Nice try, script kiddie 😏"
+
+"Error: Brain.exe not found 🧠"
+
+"Shortcut.exe has crashed 💥"
+
+"ping cheating.fail... Success! 📡"
+
+"RTFM, please! 📚"
+
+"whoami... A cheater, apparently 🕵️"

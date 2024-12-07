@@ -1,0 +1,80 @@
+{
+    "0": {
+        "level": "Level 0",
+        "description": "The goal of this level is to log into the game using SSH and find the password for the next level.",
+        "objective": "First, log into bandit.labs.overthewire.org on port 2220 using username 'bandit0' and password 'bandit0'. Then, find and read the content of the 'readme' file to get the password for the next level.",
+        "hints": [
+            "SSH is a protocol used to securely connect to remote servers",
+            "The password for this level is: bandit0",
+            "You can use the web terminal or your own SSH client",
+            "After connecting, use ls to list files in the current directory",
+            "Use cat to read file contents",
+            "The readme file is in the home directory, which is where you start"
+        ],
+        "useful_commands": ["ssh", "ls", "cat", "pwd"],
+        "resources": [
+            "https://overthewire.org/wargames/bandit/bandit0.html",
+            "https://overthewire.org/wargames/bandit/bandit1.html"
+        ]
+    },
+    "1": {
+        "level": "Level 1",
+        "description": "The password for the next level is stored in a file called '-' located in the home directory.",
+        "objective": "Read the content of a file named '-'.",
+        "hints": [
+            "Dashes in filenames require special handling",
+            "Try using ./ before the filename",
+            "You can also use the full path to the file"
+        ],
+        "useful_commands": ["ls", "cat", "pwd"],
+        "resources": ["https://overthewire.org/wargames/bandit/bandit2.html"]
+    },
+    "2": {
+        "level": "Level 2",
+        "description": "The password for the next level is stored in a file called 'spaces in this filename' located in the home directory.",
+        "objective": "Read a file that has spaces in its name.",
+        "hints": [
+            "Spaces in filenames need to be handled specially",
+            "You can use quotes around the filename",
+            "You can escape spaces with a backslash"
+        ],
+        "useful_commands": ["ls", "cat", "pwd"],
+        "resources": ["https://overthewire.org/wargames/bandit/bandit3.html"]
+    },
+    "3": {
+        "level": "Level 3",
+        "description": "The password for the next level is stored in a hidden file in the inhere directory.",
+        "objective": "Find and read a hidden file in the 'inhere' directory.",
+        "hints": [
+            "Hidden files in Linux start with a dot (.)",
+            "Use ls -a to show hidden files",
+            "You'll need to change directory into 'inhere' first"
+        ],
+        "useful_commands": ["ls", "ls -la", "cd", "cat"],
+        "resources": ["https://overthewire.org/wargames/bandit/bandit4.html"]
+    },
+    "4": {
+        "level": "Level 4",
+        "description": "The password for the next level is stored in the only human-readable file in the inhere directory.",
+        "objective": "Find the human-readable file in the 'inhere' directory and read its contents.",
+        "hints": [
+            "There are multiple files in the directory",
+            "Try reading each file to find which one contains text",
+            "The file command can help identify file types"
+        ],
+        "useful_commands": ["ls", "cd", "cat", "file"],
+        "resources": ["https://overthewire.org/wargames/bandit/bandit5.html"]
+    },
+    "5": {
+        "level": "Level 5",
+        "description": "The password is stored in a file somewhere under the inhere directory and has specific properties.",
+        "objective": "Find a file with specific properties: human-readable, 1033 bytes in size, and not executable.",
+        "hints": [
+            "Use the find command to search for files with specific properties",
+            "You can combine multiple conditions in your search",
+            "Check file sizes with ls -l"
+        ],
+        "useful_commands": ["ls", "find", "du", "file"],
+        "resources": ["https://overthewire.org/wargames/bandit/bandit6.html"]
+    }
+}
