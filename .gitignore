@@ -37,3 +37,4 @@ tests/__init__.py
 /src/__pycache__
 /.env
 /appmap.yml
+/src/templates/good_ones.md
