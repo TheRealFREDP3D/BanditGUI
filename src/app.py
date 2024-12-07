@@ -7,10 +7,9 @@ session data, and render HTML templates.
 
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
-
+import json
 import os
 from .ssh_manager import SSHManager
-from .bandit_levels import BANDIT_LEVELS
 from .password_manager import PasswordManager
 from .chat_manager import ChatManager
 
@@ -19,19 +18,37 @@ from .chat_manager import ChatManager
 # application and is used to handle incoming HTTP requests, render templates,
 # and manage the application's configuration.
 
-app = Flask(__name__)
+app = Flask(__name__, 
+    template_folder='templates',
+    static_folder='static'
+)
 app.config["SECRET_KEY"] = os.urandom(24)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*", host='0.0.0.0')
+
+# Load bandit levels from JSON file
+with open(os.path.join(os.path.dirname(__file__), 'levels', 'bandit_levels.json'), 'r') as f:
+    BANDIT_LEVELS = json.load(f)
+
+# Load welcome message
+try:
+    with open(os.path.join(os.path.dirname(__file__), 'templates', 'welcome.txt'), 'r', encoding='utf-8') as f:
+        welcome_message = f.read()
+except Exception as e:
+    print(f"Error loading welcome message: {e}")
+    welcome_message = "Welcome to the Bandit Learning Assistant! 🎮"
 
 # Create manager instances
 ssh_manager = SSHManager()
 password_manager = PasswordManager()
 chat_manager = ChatManager()
 
+# Set bandit levels in chat manager
+chat_manager.set_bandit_levels(BANDIT_LEVELS)
+
 
 @app.route("/")
 def index():
-    return render_template("index.html", levels=BANDIT_LEVELS)
+    return render_template("index.html", levels=BANDIT_LEVELS, welcome_message=welcome_message)
 
 
 @socketio.on("connect_ssh")
@@ -49,7 +66,7 @@ def handle_ssh_connection(data):
             ssh_manager.connect(session_id, username, password)
 
             # Get level number from username (e.g., bandit0 -> 0)
-            level = int(username.replace("bandit", ""))
+            level = username.replace("bandit", "")
             level_info = BANDIT_LEVELS.get(level, {})
 
             emit(
@@ -152,6 +169,6 @@ def handle_chat_message(data):
 
 if __name__ == "__main__":
     try:
-        socketio.run(app, debug=True, port=8080)
+        socketio.run(app, debug=True, port=5000)
     except Exception as e:
         print(f"Error starting server: {str(e)}")

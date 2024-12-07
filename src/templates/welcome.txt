@@ -1,0 +1,31 @@
+**Welcome to BanditGUI!**  
+Your ultimate companion for tackling Overthewire's Bandit CTF. Simplify challenges, track progress, and enhance your learning experience—all within a user-friendly interface designed to support your CTF journey.  
+
+Welcome to the Bandit Learning Assistant! 🎮
+
+I'm here to help you learn Linux commands and complete the Bandit wargame challenges. Feel free to:
+
+• Ask questions about any level
+• Get help with specific commands
+• Request hints or explanations
+• Practice in the built-in terminal
+
+Let's start your cybersecurity journey! 🚀
+
+---
+
+Available Commands:
+• !help    - Show this help message
+• !hints   - Get hints for the current level
+• !level   - Show current level information
+• !next    - View next level requirements
+• !solve   - Get the solution for the current level
+• !reset   - Reset current level progress
+• !clear   - Clear the chat history
+• !about   - Show information about BanditGUI
+
+**Created by:** Frederick Pellerin  
+📧 **Contact:** [fredp3d@proton.me](mailto:fredp3d@proton.me)  
+🌐 **GitHub Repository:** [BanditGUI on GitHub](https://github.com/therealfredp3d/banditgui)  
+
+Let’s conquer Bandit together!
