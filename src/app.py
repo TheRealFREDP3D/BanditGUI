@@ -18,20 +18,23 @@ from .chat_manager import ChatManager
 # application and is used to handle incoming HTTP requests, render templates,
 # and manage the application's configuration.
 
-app = Flask(__name__, 
-    template_folder='templates',
-    static_folder='static'
-)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config["SECRET_KEY"] = os.urandom(24)
-socketio = SocketIO(app, cors_allowed_origins="*", host='0.0.0.0')
+socketio = SocketIO(app, cors_allowed_origins="*", host="0.0.0.0")
 
 # Load bandit levels from JSON file
-with open(os.path.join(os.path.dirname(__file__), 'levels', 'bandit_levels.json'), 'r') as f:
+with open(
+    os.path.join(os.path.dirname(__file__), "levels", "bandit_levels.json"), "r"
+) as f:
     BANDIT_LEVELS = json.load(f)
 
 # Load welcome message
 try:
-    with open(os.path.join(os.path.dirname(__file__), 'templates', 'welcome.txt'), 'r', encoding='utf-8') as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "templates", "welcome.txt"),
+        "r",
+        encoding="utf-8",
+    ) as f:
         welcome_message = f.read()
 except Exception as e:
     print(f"Error loading welcome message: {e}")
@@ -48,11 +51,29 @@ chat_manager.set_bandit_levels(BANDIT_LEVELS)
 
 @app.route("/")
 def index():
-    return render_template("index.html", levels=BANDIT_LEVELS, welcome_message=welcome_message)
+    """
+    Render the index page with bandit levels and welcome message.
+
+    Returns:
+        str: Rendered HTML template for the index page.
+    """
+    return render_template(
+        "index.html", levels=BANDIT_LEVELS, welcome_message=welcome_message
+    )
 
 
 @socketio.on("connect_ssh")
 def handle_ssh_connection(data):
+    """
+    Handle SSH connection request from the client.
+
+    Args:
+        data (dict): Data containing username and password for SSH connection.
+
+    Emits:
+        ssh_error: If there is an error in connection.
+        ssh_connected: If the connection is successful.
+    """
     try:
         username = data.get("username")
         password = data.get("password")
@@ -82,6 +103,17 @@ def handle_ssh_connection(data):
 
 @socketio.on("ssh_command")
 def handle_ssh_command(data):
+    """
+    Handle SSH command execution request from the client.
+
+    Args:
+        data (dict): Data containing the command to execute and current level.
+
+    Emits:
+        terminal_output: The output of the executed command.
+        notification: If a password is found in the command output.
+        progress_update: The user's progress if a password is found.
+    """
     session_id = request.sid
     command = data.get("command", "").strip()
     current_level = data.get("current_level", 0)
@@ -119,13 +151,26 @@ def handle_ssh_command(data):
 
 @socketio.on("get_progress")
 def handle_get_progress():
-    """Send the user's progress information."""
+    """
+    Send the user's progress information.
+
+    Emits:
+        progress_update: The user's progress.
+    """
     emit("progress_update", password_manager.get_progress())
 
 
 @socketio.on("get_password")
 def handle_get_password(data):
-    """Get the saved password for a specific level."""
+    """
+    Get the saved password for a specific level.
+
+    Args:
+        data (dict): Data containing the level number.
+
+    Emits:
+        password_info: The saved password for the specified level.
+    """
     level = data.get("level")
     if level is not None:
         emit("password_info", password_manager.get_password(level))
@@ -133,13 +178,23 @@ def handle_get_password(data):
 
 @socketio.on("disconnect")
 def handle_disconnect():
-    """Clean up SSH connection on disconnect."""
+    """
+    Clean up SSH connection on disconnect.
+    """
     ssh_manager.disconnect(request.sid)
 
 
 @socketio.on("chat_message")
 def handle_chat_message(data):
-    """Handle incoming chat messages."""
+    """
+    Handle incoming chat messages.
+
+    Args:
+        data (dict): Data containing the chat message.
+
+    Emits:
+        chat_response: The response to the chat message.
+    """
     try:
         message = data.get("message", "").strip()
         if not message:
