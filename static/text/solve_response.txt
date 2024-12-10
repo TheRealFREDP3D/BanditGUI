@@ -1,0 +1,14 @@
+⚠️ **Access Denied** ⚠️
+
+<div style="font-size: 24px; color: #FF6B6B; text-align: center; padding: 20px; border-left: 4px solid #FF6B6B;">
+[QUOTE]
+# Nice Try! 😉
+
+Instead of looking for shortcuts:
+1. Try using the `!hint` command for guidance
+2. Use `!help <command>` to learn about specific commands
+3. Ask me about concepts you don't understand
+
+Remember: The journey of learning is more valuable than the destination! 🚀
+[/QUOTE]
+</div>

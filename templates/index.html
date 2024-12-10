@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandit CTF Learning Assistant</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        .left-panel {
+            flex: 0.5;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+        .terminal-section {
+            flex: 0.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+        }
+        .terminal-container {
+            flex: 1;
+            background-color: #000;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #000;
+        }
+        .challenge-info {
+            flex: 0.3;
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #000;
+        }
+        .challenge-info h2 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: #007acc;
+        }
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 13px;
+        }
+        .info-section {
+            margin-bottom: 12px;
+        }
+        .info-section h4 {
+            color: #007acc;
+            margin: 8px 0 4px 0;
+            font-size: 14px;
+        }
+        .info-section p {
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+        .info-section ul {
+            margin: 4px 0;
+            padding-left: 16px;
+        }
+        .info-section li {
+            margin: 3px 0;
+            line-height: 1.4;
+        }
+        .ssh-form {
+            flex: 0.1;
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            min-height: 30px;
+            margin-top: auto;
+            align-items: center;
+        }
+        .ssh-form input {
+            height: 28px;
+            padding: 0 8px;
+            border: 1px solid #000;
+            border-radius: 3px;
+            background-color: #404040;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        .ssh-form input#username {
+            flex: 0.4;
+        }
+        .ssh-form input#password {
+            flex: 0.4;
+        }
+        .ssh-form button {
+            flex: 0.2;
+            height: 28px;
+            padding: 0 15px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        select {
+            height: 28px;
+            padding: 0 8px;
+            border: 1px solid #000;
+            border-radius: 3px;
+            background-color: #404040;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        select:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        option:disabled {
+            color: #888;
+            background-color: #333;
+        }
+        .chat-container {
+            flex: 0.5;
+            display: flex;
+            flex-direction: column;
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 300px;
+            border: 1px solid #000;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #363636;
+            border-radius: 5px;
+            border: 1px solid #000;
+            font-size: 16px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: relative;
+        }
+        .help-text {
+            color: #888;
+            font-style: italic;
+            font-size: 13px;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+        .message {
+            margin-bottom: 8px;
+            padding: 6px;
+            border-radius: 3px;
+            line-height: 1.3;
+            font-size: 12px;
+        }
+        .user-message {
+            background-color: #2b5797;
+            margin-left: 20px;
+            margin-right: 5px;
+            border-radius: 10px 10px 0 10px;
+        }
+        .assistant-message {
+            background-color: #444444;
+            margin-right: 20px;
+            margin-left: 5px;
+            border-radius: 10px 10px 10px 0;
+        }
+        .system-message {
+            background-color: #555555;
+            font-style: italic;
+            text-align: center;
+            padding: 4px;
+            margin: 4px 30px;
+            font-size: 11px;
+            border-radius: 15px;
+        }
+        .command-list {
+            margin: 8px 0;
+            padding: 8px;
+            background-color: #2b2b2b;
+            border-radius: 5px;
+            border: 1px solid #000;
+            font-size: 11px;
+        }
+        .command {
+            display: inline-block;
+            padding: 1px 4px;
+            margin: 1px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .command.file { background-color: #4CAF50; }
+        .command.nav { background-color: #2196F3; }
+        .command.search { background-color: #9C27B0; }
+        .command.network { background-color: #FF5722; }
+        .command.system { background-color: #795548; }
+        .chat-input input {
+            font-size: 16px;
+            padding: 8px;
+        }
+        .chat-input button {
+            font-size: 16px;
+            padding: 8px 15px;
+        }
+        button {
+            padding: 8px 15px;
+            border: 1px solid #000;
+            border-radius: 3px;
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0066aa;
+        }
+        .code-block {
+            background-color: #2b2b2b;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            cursor: pointer;
+            white-space: pre;
+        }
+        .code-block:hover {
+            background-color: #3b3b3b;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            max-width: 400px;
+            display: none;
+        }
+        .notification.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .level-password {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        .keyboard-icon {
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            padding: 8px;
+            background-color: #2d2d2d;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #fff;
+            z-index: 100;
+        }
+        .keyboard-icon:hover {
+            background-color: #3d3d3d;
+        }
+        .keyboard-icon::after {
+            content: "Click for command list";
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            white-space: nowrap;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .keyboard-icon.show-tooltip::after {
+            visibility: visible;
+            opacity: 1;
+        }
+        .command-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2b2b2b;
+            border: 1px solid #000;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+            font-size: 14px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .command-popup.show {
+            display: block;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .popup-overlay.show {
+            display: block;
+        }
+        .command-popup .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #888;
+            font-size: 16px;
+        }
+        .command-popup .close-button:hover {
+            color: #fff;
+        }
+        .command-item {
+            display: block;
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+        .command-name {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .command-category {
+            margin-bottom: 15px;
+        }
+        .category-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="terminal-section">
+                <div class="terminal-container" id="terminal"></div>
+            </div>
+            <div class="challenge-info" id="challenge-info">
+                <h2>Level 0</h2>
+                <div class="info-content">
+                    <div class="info-section">
+                        <h4>Description</h4>
+                        <p>The goal of this level is to log into the game using SSH.</p>
+                        
+                        <h4>Objective</h4>
+                        <p>Log into bandit.labs.overthewire.org on port 2220 using username 'bandit0' and password 'bandit0'.</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Hints</h4>
+                        <ul>
+                            <li>SSH is a protocol used to securely connect to remote servers</li>
+                            <li>The password for this level is: bandit0</li>
+                            <li>You can use the web terminal or your own SSH client</li>
+                        </ul>
+                        
+                        <h4>Useful Commands</h4>
+                        <ul>
+                            <li>ssh</li>
+                        </ul>
+                        
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="https://overthewire.org/wargames/bandit/bandit0.html" target="_blank">Level 0 Guide</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="ssh-form">
+                <select id="username" name="username" style="flex: 0.4;">
+                    <option value="bandit0">bandit0</option>
+                    <option value="bandit1" disabled>bandit1</option>
+                    <option value="bandit2" disabled>bandit2</option>
+                    <option value="bandit3" disabled>bandit3</option>
+                    <option value="bandit4" disabled>bandit4</option>
+                    <option value="bandit5" disabled>bandit5</option>
+                    <option value="bandit6" disabled>bandit6</option>
+                    <option value="bandit7" disabled>bandit7</option>
+                    <option value="bandit8" disabled>bandit8</option>
+                    <option value="bandit9" disabled>bandit9</option>
+                    <option value="bandit10" disabled>bandit10</option>
+                    <option value="bandit11" disabled>bandit11</option>
+                    <option value="bandit12" disabled>bandit12</option>
+                    <option value="bandit13" disabled>bandit13</option>
+                    <option value="bandit14" disabled>bandit14</option>
+                    <option value="bandit15" disabled>bandit15</option>
+                    <option value="bandit16" disabled>bandit16</option>
+                    <option value="bandit17" disabled>bandit17</option>
+                    <option value="bandit18" disabled>bandit18</option>
+                    <option value="bandit19" disabled>bandit19</option>
+                    <option value="bandit20" disabled>bandit20</option>
+                    <option value="bandit21" disabled>bandit21</option>
+                    <option value="bandit22" disabled>bandit22</option>
+                    <option value="bandit23" disabled>bandit23</option>
+                    <option value="bandit24" disabled>bandit24</option>
+                    <option value="bandit25" disabled>bandit25</option>
+                    <option value="bandit26" disabled>bandit26</option>
+                    <option value="bandit27" disabled>bandit27</option>
+                    <option value="bandit28" disabled>bandit28</option>
+                    <option value="bandit29" disabled>bandit29</option>
+                    <option value="bandit30" disabled>bandit30</option>
+                    <option value="bandit31" disabled>bandit31</option>
+                    <option value="bandit32" disabled>bandit32</option>
+                    <option value="bandit33" disabled>bandit33</option>
+                </select>
+                <input type="password" id="password" placeholder="Password">
+                <button onclick="connectSSH()">Connect</button>
+            </div>
+        </div>
+        <i class="fas fa-keyboard keyboard-icon" onclick="toggleCommandPopup()"></i>
+        <div class="popup-overlay" id="popupOverlay" onclick="toggleCommandPopup()"></div>
+        <div class="command-popup" id="commandPopup">
+            <i class="fas fa-times close-button" onclick="toggleCommandPopup()"></i>
+            <h4 style="color: #007acc; margin: 0 0 15px 0;">Available Commands:</h4>
+            
+            <div class="command-category">
+                <div class="category-title" style="color: #4CAF50;">File Operations:</div>
+                <div class="command-item">
+                    <span class="command-name file">cat</span> - Display file contents
+                </div>
+                <div class="command-item">
+                    <span class="command-name file">file</span> - Determine file type
+                </div>
+                <div class="command-item">
+                    <span class="command-name file">xxd</span> - Hexdump viewer
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <div class="category-title" style="color: #2196F3;">Navigation:</div>
+                <div class="command-item">
+                    <span class="command-name nav">ls</span> - List directory contents
+                </div>
+                <div class="command-item">
+                    <span class="command-name nav">cd</span> - Change directory
+                </div>
+                <div class="command-item">
+                    <span class="command-name nav">find</span> - Search for files
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <div class="category-title" style="color: #9C27B0;">Search & Analysis:</div>
+                <div class="command-item">
+                    <span class="command-name search">grep</span> - Search text patterns
+                </div>
+                <div class="command-item">
+                    <span class="command-name search">sort</span> - Sort text lines
+                </div>
+                <div class="command-item">
+                    <span class="command-name search">uniq</span> - Filter repeated lines
+                </div>
+                <div class="command-item">
+                    <span class="command-name search">strings</span> - Find printable strings
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <div class="category-title" style="color: #FF5722;">Network Tools:</div>
+                <div class="command-item">
+                    <span class="command-name network">ssh</span> - Remote login
+                </div>
+                <div class="command-item">
+                    <span class="command-name network">nc</span> - Netcat utility
+                </div>
+                <div class="command-item">
+                    <span class="command-name network">nmap</span> - Network scanner
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <div class="category-title" style="color: #795548;">System & Compression:</div>
+                <div class="command-item">
+                    <span class="command-name system">base64</span> - Base64 encoding
+                </div>
+                <div class="command-item">
+                    <span class="command-name system">tar</span> - Archive utility
+                </div>
+                <div class="command-item">
+                    <span class="command-name system">gzip</span> - Compression tool
+                </div>
+            </div>
+        </div>
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message system-message">Welcome to the Bandit Learning Assistant!<br>Ask me anything about the challenges.</div>
+                <div class="command-list">
+                    <h4 style="color: #007acc; margin: 0 0 10px 0;">Available Commands:</h4>
+                    
+                    <div style="margin-bottom: 8px;">
+                        <span style="color: #4CAF50;">File Operations:</span><br>
+                        <span class="command file">cat</span> - Display file contents<br>
+                        <span class="command file">file</span> - Determine file type<br>
+                        <span class="command file">xxd</span> - Hexdump viewer
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <span style="color: #2196F3;">Navigation:</span><br>
+                        <span class="command nav">ls</span> - List directory contents<br>
+                        <span class="command nav">cd</span> - Change directory<br>
+                        <span class="command nav">find</span> - Search for files
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <span style="color: #9C27B0;">Search & Analysis:</span><br>
+                        <span class="command search">grep</span> - Search text patterns<br>
+                        <span class="command search">sort</span> - Sort text lines<br>
+                        <span class="command search">uniq</span> - Filter repeated lines<br>
+                        <span class="command search">strings</span> - Find printable strings
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <span style="color: #FF5722;">Network Tools:</span><br>
+                        <span class="command network">ssh</span> - Remote login<br>
+                        <span class="command network">nc</span> - Netcat utility<br>
+                        <span class="command network">nmap</span> - Network scanner
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <span style="color: #795548;">System & Compression:</span><br>
+                        <span class="command system">base64</span> - Base64 encoding<br>
+                        <span class="command system">tar</span> - Archive utility<br>
+                        <span class="command system">gzip</span> - Compression tool
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()">Send</button>
+                <span class="help-text">Type !help followed by a command for detailed help (e.g., !help ls)</span>
+            </div>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const socket = io();
+        let connected = false;
+        let currentLevel = 0;
+        let terminalFocused = false;
+
+        // Terminal setup
+        const term = new Terminal({
+            cursorBlink: true,
+            fontSize: 14,
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            theme: {
+                background: '#1e1e1e',
+                foreground: '#ffffff'
+            }
+        });
+        term.open(document.getElementById('terminal'));
+
+        let currentLine = '';
+
+        // Create a new input element for command input
+        const terminalInput = document.createElement('input');
+        terminalInput.style.opacity = '0';
+        terminalInput.style.position = 'absolute';
+        terminalInput.style.zIndex = '-1';
+        document.body.appendChild(terminalInput);
+
+        // Focus/blur handling for terminal
+        term.element.addEventListener('click', () => {
+            terminalFocused = true;
+            terminalInput.focus();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!term.element.contains(e.target)) {
+                terminalFocused = false;
+            }
+        });
+
+        // Handle input only when terminal is focused
+        terminalInput.addEventListener('input', (e) => {
+            if (!terminalFocused) return;
+            const char = e.data;
+            if (char && char.length === 1) {
+                currentLine += char;
+                term.write(char);
+            }
+        });
+
+        // Handle special keys only when terminal is focused
+        terminalInput.addEventListener('keydown', (e) => {
+            if (!terminalFocused) return;
+            if (e.key === 'Enter') {
+                term.write('\r\n');
+                if (currentLine.trim()) {
+                    socket.emit('ssh_command', {
+                        command: currentLine.trim(),
+                        current_level: currentLevel
+                    });
+                } else {
+                    term.write('$ ');
+                }
+                currentLine = '';
+                terminalInput.value = '';
+            } else if (e.key === 'Backspace') {
+                if (currentLine.length > 0) {
+                    currentLine = currentLine.slice(0, -1);
+                    term.write('\b \b');
+                }
+            }
+        });
+
+        // Keep input focused only when terminal is focused
+        setInterval(() => {
+            if (terminalFocused && document.activeElement !== terminalInput) {
+                terminalInput.focus();
+            }
+        }, 100);
+
+        socket.on('terminal_output', function(data) {
+            if (data.output) {
+                // Split output by lines and write each line with proper line endings
+                const lines = data.output.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i]) {
+                        term.write(lines[i]);
+                    }
+                    if (i < lines.length - 1) {
+                        term.write('\r\n');
+                    }
+                }
+                term.write('\r\n$ ');
+            } else {
+                term.write('$ ');
+            }
+        });
+
+        socket.on('ssh_connected', function(data) {
+            connected = true;
+            term.write('\r\nConnected to bandit.labs.overthewire.org\r\n$ ');
+            
+            // Update challenge information
+            if (data.level_info) {
+                document.getElementById('level-title').textContent = data.level_info.level;
+                document.getElementById('level-description').textContent = data.level_info.description;
+                document.getElementById('level-objective').textContent = data.level_info.objective;
+                
+                const hintsList = document.getElementById('level-hints');
+                hintsList.innerHTML = '';
+                data.level_info.hints.forEach(hint => {
+                    const li = document.createElement('li');
+                    li.textContent = hint;
+                    hintsList.appendChild(li);
+                });
+                
+                const commandsList = document.getElementById('level-commands');
+                commandsList.innerHTML = '';
+                data.level_info.useful_commands.forEach(cmd => {
+                    const li = document.createElement('li');
+                    li.textContent = cmd;
+                    commandsList.appendChild(li);
+                });
+            }
+        });
+
+        socket.on('ssh_error', function(data) {
+            connected = false;
+            term.write('\r\nError: ' + data.message + '\r\n$ ');
+        });
+
+        socket.on('ssh_response', function(data) {
+            term.write('\r\n' + data.response + '\r\n$ ');
+        });
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                const chatMessages = document.getElementById('chat-messages');
+                
+                // Add user message
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user-message';
+                userDiv.textContent = message;
+                chatMessages.appendChild(userDiv);
+                
+                // Clear input
+                input.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Send to server
+                socket.emit('chat_message', {
+                    message: message,
+                    current_level: currentLevel
+                });
+            }
+        }
+        
+        socket.on('chat_response', function(data) {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Add assistant message
+            const assistantDiv = document.createElement('div');
+            assistantDiv.className = 'message assistant-message';
+            assistantDiv.innerHTML = marked.parse(data.message);
+            chatMessages.appendChild(assistantDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+
+        // Add help message
+        // appendMessage('Assistant: # Welcome to the Bandit CTF helper!\n\nYou can:\n1. Ask questions about the current level\n2. Get command help with `!help [command]` (e.g., `!help ls`)\n3. Click on code blocks to copy them to the terminal', 'system-message');
+        
+        // Initial terminal prompt
+        term.write('$ ');
+        
+        function connectSSH() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                term.write('\r\nPlease enter both username and password.\r\n$ ');
+                return;
+            }
+            
+            socket.emit('connect_ssh', {
+                host: 'bandit.labs.overthewire.org',
+                port: 2220,
+                username: username,
+                password: password
+            });
+        }
+        
+        socket.on('notification', function(data) {
+            const notif = document.getElementById('notification');
+            notif.textContent = data.message;
+            notif.className = 'notification ' + data.type;
+            notif.style.display = 'block';
+            
+            // Hide notification after 10 seconds
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 10000);
+        });
+        
+        socket.on('progress_update', function(data) {
+            const completedLevels = data.completed_levels;
+            const levelElements = document.querySelectorAll('.level-item');
+            
+            levelElements.forEach((elem, index) => {
+                if (completedLevels.includes(index)) {
+                    elem.classList.add('completed-level');
+                }
+            });
+        });
+        
+        socket.on('password_info', function(data) {
+            const passwordDiv = document.querySelector(`#level-${data.level} .level-password`);
+            if (passwordDiv && data.password) {
+                passwordDiv.textContent = `Saved password: ${data.password}`;
+                passwordDiv.style.display = 'block';
+            }
+        });
+        
+        function loadLevel(level) {
+            currentLevel = level;
+            // ... existing level loading code ...
+            
+            // Request saved password for this level
+            socket.emit('get_saved_password', { level: level });
+        }
+        
+        // Request initial progress when page loads
+        socket.emit('get_progress');
+        
+        // Update terminal to include current level with commands
+        term.onData(function (data) {
+            socket.emit('ssh_command', {
+                command: data,
+                current_level: currentLevel
+            });
+        });
+        
+        function toggleCommandPopup() {
+            const popup = document.getElementById('commandPopup');
+            const overlay = document.getElementById('popupOverlay');
+            popup.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        let tooltipTimer;
+        
+        // Tooltip handling
+        const keyboardIcon = document.querySelector('.keyboard-icon');
+        
+        keyboardIcon.addEventListener('mouseenter', () => {
+            tooltipTimer = setTimeout(() => {
+                keyboardIcon.classList.add('show-tooltip');
+            }, 2000);
+        });
+        
+        keyboardIcon.addEventListener('mouseleave', () => {
+            clearTimeout(tooltipTimer);
+            keyboardIcon.classList.remove('show-tooltip');
+        });
+
+        // Close popup when clicking escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const popup = document.getElementById('commandPopup');
+                const overlay = document.getElementById('popupOverlay');
+                popup.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

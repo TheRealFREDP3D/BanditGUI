@@ -1,0 +1,54 @@
+{
+    "0": {
+        "level": "Level 0",
+        "description": "The goal of this level is to log into the game using SSH.",
+        "objective": "Log into bandit.labs.overthewire.org on port 2220 using username 'bandit0' and password 'bandit0'.",
+        "hints": [
+            "SSH is a protocol used to securely connect to remote servers",
+            "The password for this level is: bandit0",
+            "You can use the web terminal or your own SSH client"
+        ],
+        "useful_commands": [
+            "ssh"
+        ],
+        "resources": [
+            "https://overthewire.org/wargames/bandit/bandit0.html"
+        ]
+    },
+    "1": {
+        "level": "Level 0 \u2192 Level 1",
+        "description": "The password for the next level is stored in a file called readme located in the home directory.",
+        "objective": "Find and read the content of the 'readme' file to get the password for Level 1.",
+        "hints": [
+            "Use ls to list files in the current directory",
+            "Use cat to read file contents",
+            "The file is in the home directory, which is where you start"
+        ],
+        "useful_commands": [
+            "ls",
+            "cat",
+            "pwd"
+        ],
+        "resources": [
+            "https://overthewire.org/wargames/bandit/bandit1.html"
+        ]
+    },
+    "2": {
+        "level": "Level 1 \u2192 Level 2",
+        "description": "The password for the next level is stored in a file called '-' located in the home directory.",
+        "objective": "Read the content of a file named '-'.",
+        "hints": [
+            "Dashes in filenames require special handling",
+            "Try using ./ before the filename",
+            "You can also use the full path to the file"
+        ],
+        "useful_commands": [
+            "ls",
+            "cat",
+            "pwd"
+        ],
+        "resources": [
+            "https://overthewire.org/wargames/bandit/bandit2.html"
+        ]
+    }
+}
