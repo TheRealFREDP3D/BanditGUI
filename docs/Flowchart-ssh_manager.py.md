@@ -1,8 +1,6 @@
-# BanditGUI - Flowchart
+# BanditGUI - Flowchart SSH Management
 
-## ssh_manager.py
-
-Here's a flowchart diagram representation of the SSH management workflow using the `SSHManager` class:
+## Flowchart representation of the SSH management workflow using the `SSHManager` class
 
 ```mermaid
 flowchart TD
@@ -32,5 +30,3 @@ flowchart TD
     R -->|Yes| T["Close Connection"]
     T --> U["Remove Session Data"]
 ```
-
-This flowchart outlines the steps taken during the execution of methods in the `SSHManager` class, including connection management, command execution, and disconnection procedures.
