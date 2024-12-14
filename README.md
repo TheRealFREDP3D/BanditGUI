@@ -10,6 +10,10 @@ BanditGUI is a web application that provides a graphical user interface for the 
 * **Progress Tracking:** Monitor your progress through the Bandit levels.
 * **Password Management:** Securely store and retrieve discovered passwords.
 
+## Screenshots
+
+![BanditGUI - UI](assets/ui.png)
+
 ## Installation
 
 1. **Clone the repository:**
