@@ -828,6 +828,60 @@
             });
         });
         
+        // Add event listener to the dropdown
+        const usernameSelect = document.getElementById('username');
+        usernameSelect.addEventListener('change', () => {
+            const selectedLevel = parseInt(usernameSelect.value.replace('bandit', ''));
+            loadLevel(selectedLevel);
+        });
+        
+        // Function to load level information
+        function loadLevel(level) {
+            currentLevel = level;
+            const levelInfo = BANDIT_LEVELS[level];
+            
+            if (levelInfo) {
+                document.getElementById('challenge-info').querySelector('h2').textContent = levelInfo.level;
+                document.getElementById('challenge-info').querySelector('.info-section:nth-child(1) p').textContent = levelInfo.description;
+                document.getElementById('challenge-info').querySelector('.info-section:nth-child(2) p').textContent = levelInfo.objective;
+                
+                const hintsList = document.getElementById('challenge-info').querySelector('.info-section:nth-child(3) ul');
+                hintsList.innerHTML = '';
+                levelInfo.hints.forEach(hint => {
+                    const li = document.createElement('li');
+                    li.textContent = hint;
+                    hintsList.appendChild(li);
+                });
+                
+                const commandsList = document.getElementById('challenge-info').querySelector('.info-section:nth-child(4) ul');
+                commandsList.innerHTML = '';
+                levelInfo.useful_commands.forEach(cmd => {
+                    const li = document.createElement('li');
+                    li.textContent = cmd;
+                    commandsList.appendChild(li);
+                });
+                
+                // Update resources
+                const resourcesList = document.getElementById('challenge-info').querySelector('.info-section:nth-child(5) ul');
+                resourcesList.innerHTML = '';
+                levelInfo.resources.forEach(resource => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = resource;
+                    a.target = '_blank';
+                    a.textContent = resource;
+                    li.appendChild(a);
+                    resourcesList.appendChild(li);
+                });
+            }
+            
+            // Request saved password for this level
+            socket.emit('get_saved_password', { level: level });
+        }
+        
+        // Load default level 0 on page load
+        loadLevel(0);
+        
         function toggleCommandPopup() {
             const popup = document.getElementById('commandPopup');
             const overlay = document.getElementById('popupOverlay');
