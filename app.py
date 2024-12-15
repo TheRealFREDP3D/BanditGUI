@@ -1,6 +1,18 @@
-from flask import Flask, render_template, session, request
+"""
+This Flask application provides a web-based interface for interacting with an SSH server and managing chat conversations.
+
+The main features of the application include:
+- Establishing SSH connections to the server using provided credentials
+- Executing commands on the remote server and displaying the output
+- Detecting and saving passwords for subsequent levels
+- Tracking the user's progress through the levels
+- Providing a chat interface for interacting with an AI-powered chat manager
+
+The application uses the Flask web framework, the Flask-SocketIO library for real-time communication, and various custom modules to handle the SSH connections, password management, and chat functionality.
+"""
+
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
-import paramiko
 import os
 from ssh_manager import SSHManager
 from bandit_levels import BANDIT_LEVELS
@@ -37,6 +49,9 @@ def handle_ssh_connection(data):
             # Get level number from username (e.g., bandit0 -> 0)
             level = int(username.replace('bandit', ''))
             level_info = BANDIT_LEVELS.get(level, {})
+            
+            # Emit event to update level information
+            emit('update_level_info', level_info)
             
             emit('ssh_connected', {
                 'message': 'Connected successfully',

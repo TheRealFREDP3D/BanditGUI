@@ -1,6 +1,6 @@
-# BanditGUI - A Web-Based GUI for OverTheWire Bandit
+# BanditGUI - A Web-Based GUI for OverTheWire Bandit Wargame
 
-BanditGUI is a web application that provides a graphical user interface for the OverTheWire Bandit wargame. It simplifies the learning process by offering an integrated terminal, level-specific instructions and hints, a helpful chat assistant, and progress tracking.
+BanditGUI is a web application that provides a graphical user interface for the OverTheWire Bandit wargame. It simplifies the learning process by offering an integrated terminal, level-specific instructions and hints, an AI-powered chat assistant, and progress tracking.
 
 ## Features
 
@@ -13,6 +13,11 @@ BanditGUI is a web application that provides a graphical user interface for the 
 ## Screenshots
 
 ![BanditGUI - UI](assets/ui.png)
+
+## Prerequisites
+
+* Python 3.8 or higher
+* Git
 
 ## Installation
 
@@ -32,9 +37,17 @@ BanditGUI is a web application that provides a graphical user interface for the 
 3. **Set up environment variables:**
    Create a `.env` file in the project root and add your API key for the chat assistant (if using an external API):
 
-   ```
+   ```plaintext
    GITHUB_API_KEY=your_api_key_here
    ```
+
+   Alternatively, you can use a `.env.example` file as a template:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then, edit the `.env` file to include your actual API key.
 
 4. **Run the application:**
 
@@ -62,7 +75,7 @@ This project is actively under development. Here's a roadmap of potential improv
   * Fine-tune the model on Bandit-specific data for better performance.
   * Add support for more complex queries and interactions.
 * **Improved Error Handling:** Provide more specific and user-friendly error messages.
-* **Dynamic Level Loading:**  Load level data dynamically from the JSON file for easier updates and management.
+* **Dynamic Level Loading:** Load level data dynamically from the JSON file for easier updates and management.
 * **User Authentication:** Implement user authentication to store individual progress and preferences.
 * **Frontend Enhancements:**
   * Improve the web interface with better styling and more interactive elements.
@@ -80,10 +93,3 @@ Contributions are welcome! Please feel free to open issues and submit pull reque
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-```
-
-
-This README provides a more comprehensive overview of the project, including installation and usage instructions, and a roadmap for future development.  Remember to replace `"your_api_key_here"` with your actual API key (and consider how best to manage secrets long-term, perhaps using a secrets store).  A LICENSE file should also be created with your chosen license terms.
-
-
