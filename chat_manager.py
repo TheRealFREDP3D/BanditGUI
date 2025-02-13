@@ -197,7 +197,7 @@ Need more help? Try:
 - Ask about specific concepts"""
 
     def _generate_default_response(self):
-        return f"""# Bandit Level Assistant
+        return """# Bandit Level Assistant
 
 I can help you with:
 
