@@ -173,10 +173,14 @@ Need more specific help? Try:
         return "No hints available for this level."
 
     def _generate_command_help(self, message_lower):
-        for cmd in self.command_help.command_help.keys():
-            if cmd in message_lower:
-                return self.command_help.get_command_help(cmd)
-        return "Command not found."
+        return next(
+            (
+                self.command_help.get_command_help(cmd)
+                for cmd in self.command_help.command_help.keys()
+                if cmd in message_lower
+            ),
+            "Command not found.",
+        )
 
     def _generate_level_guidance(self, level_info):
         return f"""# Level {level_info.get('level', 'Unknown')} Guidance
