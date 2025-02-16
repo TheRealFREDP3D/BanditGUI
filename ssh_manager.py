@@ -93,7 +93,7 @@ class SSHManager:
             for client in self.connections.values():
                 try:
                     client.close()
-                except:
+                except Exception:
                     pass  # Ignore errors during close
             self.connections.clear()
             self.credentials.clear()
