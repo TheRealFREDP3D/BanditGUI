@@ -69,7 +69,7 @@ class SSHManager:
             error = stderr.read().decode('utf-8')
             
             # Ensure proper line endings for terminal display
-            result = error if error else output
+            result = error or output
             if not result.endswith('\n'):
                 result += '\n'
             return result.replace('\n', '\r\n')
@@ -82,7 +82,7 @@ class SSHManager:
             if session_id in self.connections:
                 try:
                     self.connections[session_id].close()
-                except:
+                except Exception:
                     pass  # Ignore errors during close
                 del self.connections[session_id]
                 self.credentials.pop(session_id, None)
@@ -93,7 +93,7 @@ class SSHManager:
             for client in self.connections.values():
                 try:
                     client.close()
-                except:
+                except Exception:
                     pass  # Ignore errors during close
             self.connections.clear()
             self.credentials.clear()

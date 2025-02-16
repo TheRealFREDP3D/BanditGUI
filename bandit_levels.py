@@ -346,7 +346,7 @@ BANDIT_LEVELS = {
         "resources": ["https://overthewire.org/wargames/bandit/bandit25.html"],
         "status": "unsolved",
     },
-    # More levels can be added here
+    # TODO Missing levels will be added here
 }
 
-# Missing levels can be added here (26-34)
+

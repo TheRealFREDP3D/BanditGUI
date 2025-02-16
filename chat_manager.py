@@ -92,16 +92,7 @@ ssh -i keyfile username@hostname
 - Use `man {command}` for the full manual
 - Use `{command} --help` for quick help
 """
-        return response
-
-
-class APIManager:
-    def __init__(self):
-        self.api_key = os.getenv("GITHUB_TOKEN")
-        if not self.api_key:
-            raise ValueError("GITHUB_TOKEN environment variable is not set.")
-        self.base_url = "https://models.inference.ai.azure.com"
-        self.model = "Meta-Llama-3.1-70B-Instruct"
+        return response       
 
     def get_headers(self):
         return {
@@ -111,9 +102,13 @@ class APIManager:
 
 
 class ChatManager:
-    def __init__(self, command_help, api_manager):
+    def __init__(self, command_help):
         self.command_help = command_help
-        self.api_manager = api_manager
+        self.api_key = os.getenv("GITHUB_TOKEN")
+        if not self.api_key:
+            raise VallueError("GITHUB_TOKEN environment variable not set")
+        self.base_url = "https://models.inference.ai.azure.com"
+        self.model = "Meta-Llama-3.1-70B-Instruct"
         self.system_prompt = """You are an expert CTF (Capture The Flag) assistant, specifically knowledgeable about the OverTheWire Bandit challenges. 
         Your role is to help users learn and solve challenges without giving direct answers. 
         Provide hints, explain Unix commands, and guide users through problem-solving steps.
@@ -173,10 +168,14 @@ Need more specific help? Try:
         return "No hints available for this level."
 
     def _generate_command_help(self, message_lower):
-        for cmd in self.command_help.command_help.keys():
-            if cmd in message_lower:
-                return self.command_help.get_command_help(cmd)
-        return "Command not found."
+        return next(
+            (
+                self.command_help.get_command_help(cmd)
+                for cmd in self.command_help.command_help.keys()
+                if cmd in message_lower
+            ),
+            "Command not found.",
+        )
 
     def _generate_level_guidance(self, level_info):
         return f"""# Level {level_info.get('level', 'Unknown')} Guidance
@@ -193,7 +192,7 @@ Need more help? Try:
 - Ask about specific concepts"""
 
     def _generate_default_response(self):
-        return f"""# Bandit Level Assistant
+        return """# Bandit Level Assistant
 
 I can help you with:
 
