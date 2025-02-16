@@ -92,16 +92,7 @@ ssh -i keyfile username@hostname
 - Use `man {command}` for the full manual
 - Use `{command} --help` for quick help
 """
-        return response
-
-
-class APIManager:
-    def __init__(self):
-        self.api_key = os.getenv("GITHUB_TOKEN")
-        if not self.api_key:
-            raise ValueError("GITHUB_TOKEN environment variable is not set.")
-        self.base_url = "https://models.inference.ai.azure.com"
-        self.model = "Meta-Llama-3.1-70B-Instruct"
+        return response       
 
     def get_headers(self):
         return {
@@ -111,9 +102,13 @@ class APIManager:
 
 
 class ChatManager:
-    def __init__(self, command_help, api_manager):
+    def __init__(self, command_help):
         self.command_help = command_help
-        self.api_manager = api_manager
+        self.api_key = os.getenv("GITHUB_TOKEN")
+        if not self.api_key:
+            raise VallueError("GITHUB_TOKEN environment variable not set")
+        self.base_url = "https://models.inference.ai.azure.com"
+        self.model = "Meta-Llama-3.1-70B-Instruct"
         self.system_prompt = """You are an expert CTF (Capture The Flag) assistant, specifically knowledgeable about the OverTheWire Bandit challenges. 
         Your role is to help users learn and solve challenges without giving direct answers. 
         Provide hints, explain Unix commands, and guide users through problem-solving steps.
