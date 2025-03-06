@@ -82,7 +82,7 @@ class SSHManager:
             if session_id in self.connections:
                 try:
                     self.connections[session_id].close()
-                except:
+                except Exception:
                     pass  # Ignore errors during close
                 del self.connections[session_id]
                 self.credentials.pop(session_id, None)
