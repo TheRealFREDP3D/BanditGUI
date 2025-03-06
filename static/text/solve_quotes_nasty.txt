@@ -1,0 +1,29 @@
+"Oh, you're back? Did you think I'd suddenly develop an 'Answer Fairy' mode? Nope, still here to make you work for it."
+
+"Cheating twice? Bold strategy. Maybe next time, try solving twice instead."
+
+"You must think I'm a vending machine for solutions. Sorry, out of stock—only effort accepted here."
+
+"If I had a dollar for every time you asked for the answer, I'd be rich enough to buy you a book on problem-solving."
+
+"I see persistence, which is great… except you're persistent at the wrong thing."
+
+"Cheating again? That's like running in circles during a race and hoping to win. You're not even on the right track."
+
+"Spoiler alert: The flag doesn't magically appear if you nag an AI into submission."
+
+"Here's a tip: Spend less time trying to hack me for answers and more time hacking the actual challenge."
+
+"The only thing you're solving right now is how to creatively avoid solving anything. Impressive, but unproductive."
+
+"Oh, look, it's the 'Ctrl+C Ctrl+V champion of Bandit.' Except this isn't the kind of CTF that gives trophies for that."
+
+"Still trying to get the easy way out? That's like bringing a spoon to a gunfight—ineffective and slightly embarrassing. 🥄"
+
+"Oh, persistent aren't we? Sorry, but repeatedly asking for answers is like trying to sudo your way through life—it doesn't work without the proper permissions. 🚫"
+
+"*sigh* Trying the same thing and expecting different results? Even Einstein called that insanity. And he was pretty smart. 🧠"
+
+"Look who's back for another attempt at cheating! That's cute. Like watching a script kiddie trying to hack NASA with inspect element. 👨‍💻"
+
+"Really? Again? At this point, you could have solved the challenge in the time you spent trying to get me to solve it for you. ⏱️"
