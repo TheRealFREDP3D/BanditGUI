@@ -69,7 +69,7 @@ class SSHManager:
             error = stderr.read().decode('utf-8')
             
             # Ensure proper line endings for terminal display
-            result = error if error else output
+            result = error or output
             if not result.endswith('\n'):
                 result += '\n'
             return result.replace('\n', '\r\n')
