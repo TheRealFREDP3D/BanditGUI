@@ -92,8 +92,18 @@ ssh -i keyfile username@hostname
 - Use `man {command}` for the full manual
 - Use `{command} --help` for quick help
 """
-        return response       
+        return response
 
+
+# Add the missing APIManager class
+class APIManager:
+    def __init__(self):
+        self.api_key = os.getenv("GITHUB_TOKEN")
+        if not self.api_key:
+            raise ValueError("GITHUB_TOKEN environment variable not set")
+        self.base_url = "https://models.inference.ai.azure.com"
+        self.model = "Meta-Llama-3.1-70B-Instruct"
+        
     def get_headers(self):
         return {
             "Authorization": f"Bearer {self.api_key}",
@@ -102,13 +112,9 @@ ssh -i keyfile username@hostname
 
 
 class ChatManager:
-    def __init__(self, command_help):
+    def __init__(self, command_help, api_manager):
         self.command_help = command_help
-        self.api_key = os.getenv("GITHUB_TOKEN")
-        if not self.api_key:
-            raise VallueError("GITHUB_TOKEN environment variable not set")
-        self.base_url = "https://models.inference.ai.azure.com"
-        self.model = "Meta-Llama-3.1-70B-Instruct"
+        self.api_manager = api_manager
         self.system_prompt = """You are an expert CTF (Capture The Flag) assistant, specifically knowledgeable about the OverTheWire Bandit challenges. 
         Your role is to help users learn and solve challenges without giving direct answers. 
         Provide hints, explain Unix commands, and guide users through problem-solving steps.
@@ -214,12 +220,14 @@ What would you like to know about?
 """
 
 
+# For testing/debugging only - remove or comment these lines when importing the module
 # Dependency Injection
-command_help = CommandHelp()
-api_manager = APIManager()
-chat_manager = ChatManager(command_help, api_manager)
+if __name__ == "__main__":
+    command_help = CommandHelp()
+    api_manager = APIManager()
+    chat_manager = ChatManager(command_help, api_manager)
 
-# Example usage
-user_message = "Can you give me a hint for level 1?"
-response = chat_manager.generate_response(user_message, current_level=1)
-print(response)
+    # Example usage
+    user_message = "Can you give me a hint for level 1?"
+    response = chat_manager.generate_response(user_message, current_level=1)
+    print(response)

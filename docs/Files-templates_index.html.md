@@ -1,6 +1,6 @@
 # BanditGUI v1.1 - index.html
 
-## docs/v1.1-templates_index.html
+`docs/v1.1-templates_index.html`
 
 ---
 
