@@ -174,3 +174,5 @@ cython_debug/
 .pypirc
 project-context.xml
 .vscode/_PUBLIC-v1.2.code-workspace
+/.dependencygraph
+bandit_levels.py
