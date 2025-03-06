@@ -1,5 +1,6 @@
 """
-This Flask application provides a web-based interface for interacting with an SSH server and managing chat conversations.
+This Flask application provides a web-based interface for interacting with an SSH server and managing chat 
+conversations.
 
 The main features of the application include:
 - Establishing SSH connections to the server using provided credentials
@@ -8,7 +9,8 @@ The main features of the application include:
 - Tracking the user's progress through the levels
 - Providing a chat interface for interacting with an AI-powered chat manager
 
-The application uses the Flask web framework, the Flask-SocketIO library for real-time communication, and various custom modules to handle the SSH connections, password management, and chat functionality.
+The application uses the Flask web framework, the Flask-SocketIO library for real-time communication, and 
+various custom modules to handle the SSH connections, password management, and chat functionality.
 """
 
 from flask import Flask, render_template, request
@@ -17,7 +19,7 @@ import os
 from ssh_manager import SSHManager
 from bandit_levels import BANDIT_LEVELS
 from password_manager import PasswordManager
-from chat_manager import ChatManager, APIManager, ChatManager, CommandHelp
+from chat_manager import ChatManager, APIManager, CommandHelp
 from dotenv import load_dotenv
 
 load_dotenv()

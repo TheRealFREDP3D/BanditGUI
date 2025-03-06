@@ -94,6 +94,15 @@ ssh -i keyfile username@hostname
 """
         return response       
 
+
+class APIManager:
+    def __init__(self):
+        self.api_key = os.getenv("GITHUB_TOKEN")
+        if not self.api_key:
+            raise ValueError("GITHUB_TOKEN environment variable is not set.")
+        self.base_url = "https://models.inference.ai.azure.com"
+        self.model = "Meta-Llama-3.1-70B-Instruct"
+
     def get_headers(self):
         return {
             "Authorization": f"Bearer {self.api_key}",
@@ -214,12 +223,14 @@ What would you like to know about?
 """
 
 
+# For testing/debugging only - remove or comment these lines when importing the module
 # Dependency Injection
-command_help = CommandHelp()
-api_manager = APIManager()
-chat_manager = ChatManager(command_help, api_manager)
+if __name__ == "__main__":
+    command_help = CommandHelp()
+    api_manager = APIManager()
+    chat_manager = ChatManager(command_help, api_manager)
 
-# Example usage
-user_message = "Can you give me a hint for level 1?"
-response = chat_manager.generate_response(user_message, current_level=1)
-print(response)
+    # Example usage
+    user_message = "Can you give me a hint for level 1?"
+    response = chat_manager.generate_response(user_message, current_level=1)
+    print(response)
