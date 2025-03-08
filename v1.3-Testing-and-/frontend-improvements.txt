@@ -1,0 +1,323 @@
+// Terminal.jsx with accessibility improvements
+import React, { useState, useEffect, useRef } from 'react';
+import { useTerminalContext } from '../contexts/TerminalContext';
+import CommandInput from './CommandInput';
+import CommandOutput from './CommandOutput';
+import CommandInfoPopup from './CommandInfoPopup';
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
+import { toast } from 'react-toastify';
+import './Terminal.css';
+
+const Terminal = () => {
+  const terminalRef = useRef(null);
+  const inputRef = useRef(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupCommand, setPopupCommand] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
+  const { 
+    connected,
+    connecting,
+    output, 
+    sendCommand,
+    connect,
+    disconnect,
+    levelCompleted,
+    commandHistory,
+    currentLevel,
+    error
+  } = useTerminalContext();
+  
+  // Register keyboard shortcuts
+  useKeyboardShortcuts({
+    'Ctrl+L': () => sendCommand('clear'),
+    'Ctrl+C': () => sendCommand('^C'),
+    'Alt+T': () => inputRef.current?.focus(),
+    'Escape': () => setShowPopup(false)
+  });
+  
+  // Auto-scroll to bottom when new output is received
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [output]);
+  
+  // Show error toast when error occurs
+  useEffect(() => {
+    if (error) {
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+    }
+  }, [error]);
+  
+  // Show command info popup when a command is clicked
+  const handleCommandClick = (command) => {
+    setPopupCommand(command);
+    setShowPopup(true);
+  };
+  
+  // Handle connection with loading state
+  const handleConnect = async () => {
+    setLoading(true);
+    try {
+      await connect();
+    } catch (err) {
+      console.error("Connection error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <div 
+      className="terminal-panel" 
+      role="region" 
+      aria-label="SSH Terminal"
+    >
+      <div className="terminal-header">
+        <div className="terminal-title">
+          <h2>Bandit Level {currentLevel}</h2>
+          <div className="connection-status">
+            Status: <span className={connected ? "connected" : "disconnected"}>
+              {connected ? "Connected" : "Disconnected"}
+            </span>
+          </div>
+        </div>
+        <div className="terminal-controls">
+          {!connected ? (
+            <button 
+              className="connect-button" 
+              onClick={handleConnect}
+              disabled={connecting || loading}
+              aria-busy={connecting || loading}
+            >
+              {connecting || loading ? 'Connecting...' : 'Connect'}
+            </button>
+          ) : (
+            <button 
+              className="disconnect-button" 
+              onClick={disconnect}
+              aria-label="Disconnect from SSH server"
+            >
+              Disconnect
+            </button>
+          )}
+          <button 
+            className="help-button"
+            onClick={() => setShowPopup(true)}
+            aria-label="Show keyboard shortcuts"
+          >
+            <span aria-hidden="true">?</span>
+          </button>
+        </div>
+      </div>
+      
+      <div 
+        className="terminal-body" 
+        ref={terminalRef}
+        tabIndex={0}
+        role="log"
+        aria-live="polite"
+        aria-label="Terminal output"
+      >
+        <CommandOutput 
+          output={output} 
+          onCommandClick={handleCommandClick}
+        />
+      </div>
+      
+      <CommandInput 
+        ref={inputRef}
+        onSendCommand={sendCommand}
+        disabled={!connected}
+        history={commandHistory}
+        ariaLabel="Terminal command input"
+      />
+      
+      {showPopup && (
+        <CommandInfoPopup
+          command={popupCommand || 'help'}
+          onClose={() => setShowPopup(false)}
+        />
+      )}
+      
+      {levelCompleted && (
+        <div 
+          className="level-completed-notification"
+          role="alertdialog"
+          aria-labelledby="level-completed-title"
+        >
+          <div className="notification-content">
+            <h3 id="level-completed-title">Level Completed!</h3>
+            <p>You've found the password for the next level!</p>
+            <div className="notification-actions">
+              <button 
+                onClick={() => window.location.reload()}
+                className="primary-button"
+              >
+                Continue to Next Level
+              </button>
+              <button 
+                onClick={() => document.getElementById('chatbox-input').focus()}
+                className="secondary-button"
+              >
+                Get Help for Next Level
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Terminal;
+
+// useKeyboardShortcuts.js - Custom hook for keyboard shortcuts
+import { useEffect } from 'react';
+
+const useKeyboardShortcuts = (shortcuts) => {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Build key combination string (e.g., "Ctrl+L")
+      let combo = '';
+      if (event.ctrlKey) combo += 'Ctrl+';
+      if (event.altKey) combo += 'Alt+';
+      if (event.shiftKey) combo += 'Shift+';
+      
+      // Add the actual key
+      combo += event.key.toUpperCase();
+      
+      // Execute shortcut function if it exists
+      if (shortcuts[combo]) {
+        event.preventDefault();
+        shortcuts[combo]();
+      }
+    };
+    
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+    
+    // Clean up
+    return () => {
+      window.addEventListener('keydown', handleKeyDown);
+    };
+  }, [shortcuts]);
+};
+
+export default useKeyboardShortcuts;
+
+// CommandInput.jsx with accessibility improvements
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
+
+const CommandInput = forwardRef(({ onSendCommand, disabled, history, ariaLabel }, ref) => {
+  const [command, setCommand] = useState('');
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const inputRef = useRef(null);
+  
+  // Expose inputRef through forwardRef
+  useEffect(() => {
+    if (ref) {
+      if (typeof ref === 'function') {
+        ref(inputRef.current);
+      } else {
+        ref.current = inputRef.current;
+      }
+    }
+  }, [ref]);
+  
+  // Focus input when component mounts
+  useEffect(() => {
+    if (inputRef.current && !disabled) {
+      inputRef.current.focus();
+    }
+  }, [disabled]);
+  
+  // Handle key press events
+  const handleKeyDown = (e) => {
+    // Arrow up to navigate history
+    if (e.key === 'ArrowUp' && historyIndex < history.length - 1) {
+      e.preventDefault();
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setCommand(history[history.length - 1 - newIndex]);
+    }
+    // Arrow down to navigate history
+    else if (e.key === 'ArrowDown' && historyIndex > -1) {
+      e.preventDefault();
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setCommand(newIndex >= 0 ? history[history.length - 1 - newIndex] : '');
+    }
+    // Tab for command completion (basic implementation)
+    else if (e.key === 'Tab') {
+      e.preventDefault();
+      // Simple command completion example - add more sophisticated logic as needed
+      const commonCommands = ['ls', 'cat', 'cd', 'find', 'grep', 'pwd', 'whoami', 'file'];
+      
+      for (const cmd of commonCommands) {
+        if (cmd.startsWith(command) && cmd !== command) {
+          setCommand(cmd);
+          break;
+        }
+      }
+    }
+    // Enter to submit command
+    else if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+  
+  // Handle command submission
+  const handleSubmit = () => {
+    if (command.trim() && !disabled) {
+      onSendCommand(command);
+      setCommand('');
+      setHistoryIndex(-1);
+      
+      // Refocus input after submission
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 0);
+    }
+  };
+  
+  return (
+    <div className="command-input-container" role="form">
+      <div className="command-prompt" aria-hidden="true">bandit$</div>
+      <input
+        ref={inputRef}
+        type="text"
+        className="command-input"
+        value={command}
+        onChange={(e) => setCommand(e.target.value)}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+        placeholder={disabled ? "Connect to start..." : "Enter command..."}
+        aria-label={ariaLabel || "Terminal command input"}
+        autoComplete="off"
+        spellCheck="false"
+      />
+      <button
+        className="send-button"
+        onClick={handleSubmit}
+        disabled={disabled || !command.trim()}
+        aria-label="Execute command"
+      >
+        <span aria-hidden="true">Send</span>
+      </button>
+    </div>
+  );
+});
+
+export default CommandInput;
