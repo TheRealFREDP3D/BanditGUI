@@ -44,6 +44,11 @@ chat_manager = ChatManager(command_help, api_manager)
 def index():
     return render_template("index.html", levels=BANDIT_LEVELS)
 
+@app.route('/get_level_info')
+def get_level_info():
+    username = request.args.get('username')
+    level_info = get_level_info_by_username(username)  # Implement this function to fetch level info
+    return jsonify(level_info)
 
 # SocketIO event handlers
 @socketio.on("connect_ssh")
@@ -127,7 +132,6 @@ def handle_get_password(data):
     level = data.get("level", 0)
     password = password_manager.get_password(level)
     emit("password_info", {"level": level, "password": password})
-
 
 @socketio.on("disconnect")
 def handle_disconnect():
