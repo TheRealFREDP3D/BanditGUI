@@ -93,10 +93,16 @@ ssh -i keyfile username@hostname
 - Use `{command} --help` for quick help
 """
 <<<<<<< HEAD
+<<<<<<< HEAD
         return response
 
 
 # Add the missing APIManager class
+=======
+        return response       
+
+
+>>>>>>> origin/main
 =======
         return response       
 
@@ -107,15 +113,21 @@ class APIManager:
         self.api_key = os.getenv("GITHUB_TOKEN")
         if not self.api_key:
 <<<<<<< HEAD
+<<<<<<< HEAD
             raise ValueError("GITHUB_TOKEN environment variable not set")
         self.base_url = "https://models.inference.ai.azure.com"
         self.model = "Meta-Llama-3.1-70B-Instruct"
         
 =======
+=======
+>>>>>>> origin/main
             raise ValueError("GITHUB_TOKEN environment variable is not set.")
         self.base_url = "https://models.inference.ai.azure.com"
         self.model = "Meta-Llama-3.1-70B-Instruct"
 
+<<<<<<< HEAD
+>>>>>>> origin/main
+=======
 >>>>>>> origin/main
     def get_headers(self):
         return {
@@ -126,10 +138,13 @@ class APIManager:
 
 class ChatManager:
 <<<<<<< HEAD
+<<<<<<< HEAD
     def __init__(self, command_help, api_manager):
         self.command_help = command_help
         self.api_manager = api_manager
 =======
+=======
+>>>>>>> origin/main
     def __init__(self, command_help):
         self.command_help = command_help
         self.api_key = os.getenv("GITHUB_TOKEN")
@@ -137,6 +152,9 @@ class ChatManager:
             raise VallueError("GITHUB_TOKEN environment variable not set")
         self.base_url = "https://models.inference.ai.azure.com"
         self.model = "Meta-Llama-3.1-70B-Instruct"
+<<<<<<< HEAD
+>>>>>>> origin/main
+=======
 >>>>>>> origin/main
         self.system_prompt = """You are an expert CTF (Capture The Flag) assistant, specifically knowledgeable about the OverTheWire Bandit challenges. 
         Your role is to help users learn and solve challenges without giving direct answers. 
